@@ -10,7 +10,7 @@ from torch import optim, nn
 
 
 class Autoencoder(nn.Module):
-    def __init__(self, latent):
+    def __init__(self, latent = 10):
         if not isinstance(latent, int):
             raise TypeError('\'latnet\' should be an integer.')
         if latent < 1:

@@ -49,7 +49,7 @@ data_train = torch.tensor(data_train, dtype = torch.float32)
 
 #model
 latent = 5
-model = Autoencoder(latent)
+model = Autoencoder(latent = latent)
 
 #to gpu
 data_train = data_train.to(device)
