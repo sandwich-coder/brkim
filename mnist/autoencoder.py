@@ -11,10 +11,6 @@ from torch import optim, nn
 
 class Autoencoder(nn.Module):
     def __init__(self):
-        if not isinstance(latent, int):
-            raise TypeError('\'latnet\' should be an integer.')
-        if latent < 1:
-            raise ValueError('\'latent\' must be positive.')
         super().__init__()
 
         self.encoder = nn.Sequential(
