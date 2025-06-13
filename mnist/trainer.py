@@ -26,14 +26,15 @@ class Trainer:
         'epochs',
         ]
     """
-    def __init__(self, Optimizer = optim.Adam, loss_fn = nn.MSELoss()):
+    def __init__(self, Optimizer = optim.Adam, LossFn = nn.MSELoss):
         if not issubclass(Optimizer, optim.Optimizer):
             raise TypeError('The optimizer should be a subclass of \'torch.nn.optim.Optimizer\'.')
-        if not isinstance(loss_fn, nn.Module):
-            raise TypeError('\'loss_fn\' should be a \'torch.nn.Module\'.')
+        if not issubclass(LossFn, nn.Module):
+            raise TypeError('\'LossFn\' should be a subclass of \'torch.nn.Module\'.')
 
         self.Optimizer = Optimizer
-        self.loss_fn = loss_fn
+        self.loss_fn = LossFn(reduction = 'none')
+
         self.descent = None
         self.batchloss_final = None
 
@@ -67,6 +68,8 @@ class Trainer:
 
                 out = model(x)
                 loss = self.loss_fn(out, x)
+                loss = torch.mean(loss, 1, dtype = torch.float32)
+                loss = torch.mean(loss, 0, dtype = torch.float32)
 
                 loss.backward()
                 optimizer.step()
