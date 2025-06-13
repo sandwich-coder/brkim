@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader
 learning_rate = 0.0001
 epsilon = 1e-7
 batch_size = 32
-epochs = 12
+epochs = 100
 
 
 class Trainer:
