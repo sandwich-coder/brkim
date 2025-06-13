@@ -34,6 +34,7 @@ from loader import Loader
 from pipe import Pipe
 from autoencoder import Autoencoder
 from trainer import Trainer
+from plot import Plot
 
 
 #gpu
@@ -67,7 +68,27 @@ logging.info('\'device\' is allocated to \'data_train\' and \'model\'.')
 trainer = Trainer()
 trainer.train(data_train, model)
 
+#to cpu
+data_train = data_train.cpu()
+model.cpu()
+
 #test
 data_test = loader.load('mnist', train = False)
-out_train = model(data_train)
-out_test = model(data_test)
+data_test = torch.tensor(data_test, dtype = torch.float32)
+output_train = model(data_train)
+output_train = output_train.detach()
+output_test = model(data_test)
+output_test = output_test.detach()
+
+#plot
+plot = Plot()
+np.random.seed(seed = 1)    #standardized
+descent = plot.history(trainer.descent, trainer.batchloss_final)
+comparisons_train = plot.before_after(
+    data_train.numpy(), output_train.numpy(),
+    index = np.random.choice(np.arange(data_train.shape[0]), size = 30, replace = False),
+    )
+comparisons_test = plot.before_after(
+    data_test.numpy(), output_test.numpy(),
+    index = np.random.choice(np.arange(data_test.shape[0]), size = 30, replace = False),
+    )

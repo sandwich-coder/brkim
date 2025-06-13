@@ -11,6 +11,8 @@ from sklearn.preprocessing import MinMaxScaler
 def check(X):
     if not isinstance(X, np.ndarray):
         raise TypeError('The input should be a \'nmpy.ndarray\'.')
+    if X.dtype != np.float64:
+        X = X.astype('float64')
     if X.ndim != 2:
         raise ValueError('The input must be of a standard shape.')
 

@@ -27,11 +27,13 @@ class Trainer:
     def train(self, data, model):
         if not isinstance(data, torch.Tensor):
             raise TypeError('The data should be a \'torch.Tensor\'.')
+        if data.dtype != torch.float32:
+            data = data.to(torch.float32)
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
 
         batch_size = 32
-        epochs = 100
+        epochs = 10
 
         optimizer = self.Optimizer(
             model.parameters(),
@@ -70,4 +72,4 @@ class Trainer:
             self.descent.append(losses)
 
         self.descent = np.concatenate(self.descent, axis = 0)
-        self.batchloss_final = losses.mean(axis = 0, dtype = 'float64').round(decimals = 4)
+        self.batchloss_final = losses.mean(axis = 0, dtype = 'float64').tolist()
