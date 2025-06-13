@@ -56,8 +56,7 @@ data_train = pipe.process(data_train)
 data_train = torch.tensor(data_train, dtype = torch.float32)
 
 #model
-latent = 5
-model = Autoencoder(latent = latent)
+model = Autoencoder()
 
 #to gpu
 data_train = data_train.to(device)
