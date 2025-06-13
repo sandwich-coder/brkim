@@ -73,10 +73,10 @@ data_train = data_train.cpu()
 model.cpu()
 
 #test
-data_test = loader.load('mnist', train = False)
-data_test = torch.tensor(data_test, dtype = torch.float32)
 output_train = model(data_train)
 output_train = output_train.detach()
+data_test = loader.load('mnist', train = False)
+data_test = torch.tensor(data_test, dtype = torch.float32)
 output_test = model(data_test)
 output_test = output_test.detach()
 
