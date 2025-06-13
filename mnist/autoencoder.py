@@ -31,6 +31,12 @@ class Autoencoder(nn.Module):
             nn.Sequential(nn.Linear(729, 784), nn.Tanh()),
             )
 
+        #initialization
+        with torch.no_grad():
+            nn.init.xavier_uniform_(self.encoder[-1][0].weight)
+            nn.init.xavier_uniform_(self.decoder[-1][0].weight)
+
+
     def forward(self, x):
         x = torch.clone(x)
 
