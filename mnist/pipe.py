@@ -8,18 +8,20 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 
 
+def check(X):
+    if not isinstance(X, np.ndarray):
+        raise TypeError('The input should be a \'nmpy.ndarray\'.')
+    if X.ndim != 2:
+        raise ValueError('The input must be of a standard shape.')
+
+
 class Pipe:
     def __init__(self):
         self.scaler = None
         self.previous = None
-    def check(self, X):
-        if not isinstance(X, np.ndarray):
-            raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if X.ndim != 2:
-            raise ValueError('The input must be of a standard shape.')
 
     def process(self, X, train = True):
-        self.check(X)
+        check(X)
         X = X.copy()
 
         if not train:
@@ -35,7 +37,7 @@ class Pipe:
         
 
     def unprocess(self, X):
-        self.check(X)
+        check(X)
         X = X.copy()
 
         unprocessed = self.scaler.inverse_transform(X)

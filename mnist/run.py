@@ -66,3 +66,8 @@ logging.info('\'device\' is allocated to \'data_train\' and \'model\'.')
 #train
 trainer = Trainer()
 trainer.train(data_train, model)
+
+#test
+data_test = loader.load('mnist', train = False)
+out_train = model(data_train)
+out_test = model(data_test)

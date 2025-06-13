@@ -14,6 +14,10 @@ class Loader:
         pass
 
     def load(self, name, train = True):
+        if not isinstance(name, str):
+            raise TypeError('The name should be a string.')
+        if not isinstance(train, bool):
+            raise TypeError('The \'train\' should be boolean.')
 
         array = EMNIST(
             root = 'datasets',

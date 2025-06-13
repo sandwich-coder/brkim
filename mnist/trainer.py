@@ -13,6 +13,10 @@ from torch.utils.data import DataLoader
 
 class Trainer:
     def __init__(self, Optimizer = optim.Adam, loss_fn = nn.MSELoss()):
+        if not issubclass(Optimizer, optim.Optimizer):
+            raise TypeError('The optimizer should be a subclass of \'torch.nn.optim.Optimizer\'.')
+        if not isinstance(loss_fn, nn.Module):
+            raise TypeError('\'loss_fn\' should be a \'torch.nn.Module\'.')
 
         self.Optimizer = Optimizer
         self.loss_fn = loss_fn
@@ -21,6 +25,10 @@ class Trainer:
 
     
     def train(self, data, model):
+        if not isinstance(data, torch.Tensor):
+            raise TypeError('The data should be a \'torch.Tensor\'.')
+        if not isinstance(model, nn.Module):
+            raise TypeError('The model should be a \'torch.nn.Module\'.')
 
         batch_size = 32
         epochs = 100
@@ -40,10 +48,10 @@ class Trainer:
         for lll in range(epochs):
             model.train()
             losses = []
-            for X in tqdm(loader, leave = False, ncols = 70):
+            for x in tqdm(loader, leave = False, ncols = 70):
 
-                out = model(X)
-                loss = self.loss_fn(out, X)
+                out = model(x)
+                loss = self.loss_fn(out, x)
 
                 loss.backward()
                 optimizer.step()
