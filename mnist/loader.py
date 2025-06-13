@@ -27,6 +27,10 @@ class Loader:
             transform = ToTensor(),
             ).data.numpy()
         array = array.astype('float64')
+
+        #image rotation
+        array = array.transpose(0, 2, 1)
+
         array = array.reshape([array.shape[0], -1])
         array = (array - array.min()) / (array.max() - array.min())
         array = (array - np.float64(0.5)) * np.float64(2)
