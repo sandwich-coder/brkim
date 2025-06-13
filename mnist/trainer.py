@@ -11,7 +11,21 @@ from torch import optim, nn
 from torch.utils.data import DataLoader
 
 
+learning_rate = 0.0001
+epsilon = 1e-7
+batch_size = 32
+epochs = 12
+
+
 class Trainer:
+    """
+    reference = [
+        'learning_rate',
+        'epsilon',
+        'batch_size',
+        'epochs',
+        ]
+    """
     def __init__(self, Optimizer = optim.Adam, loss_fn = nn.MSELoss()):
         if not issubclass(Optimizer, optim.Optimizer):
             raise TypeError('The optimizer should be a subclass of \'torch.nn.optim.Optimizer\'.')
@@ -23,6 +37,8 @@ class Trainer:
         self.descent = None
         self.batchloss_final = None
 
+    def __repr__(self):
+        return 'trainer'
     
     def train(self, data, model):
         if not isinstance(data, torch.Tensor):
@@ -32,13 +48,10 @@ class Trainer:
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
 
-        batch_size = 32
-        epochs = 10
-
         optimizer = self.Optimizer(
             model.parameters(),
-            lr = 0.0001,
-            eps = 1e-7,
+            lr = learning_rate,
+            eps = epsilon,
             )
 
         loader = DataLoader(

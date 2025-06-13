@@ -34,7 +34,9 @@ class Autoencoder(nn.Module):
             nn.init.xavier_uniform_(self.encoder[-1][0].weight)
             nn.init.xavier_uniform_(self.decoder[-1][0].weight)
 
-
+    def __repr__(self):
+        return 'autoencoder'
+    
     def forward(self, x):
         x = torch.clone(x)
 

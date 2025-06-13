@@ -18,9 +18,16 @@ def check(X):
 
 
 class Pipe:
+    """
+    reference = [
+        'check',
+        ]
+    """
     def __init__(self):
         self.scaler = None
         self.previous = None
+    def __repr__(self):
+        return 'pipeline'
 
     def process(self, X, train = True):
         check(X)
