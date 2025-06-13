@@ -27,7 +27,7 @@ class AnomalyDetector:
         train_error = torch.mean(train_error, 1, dtype = torch.float32)
         train_error = train_error.numpy()
         train_error = train_error.astype('float64')
-        self.threshold = np.quantile(train_error, 0.9, axis = 0)
+        self.threshold = np.quantile(train_error, 0.95, axis = 0)
 
     def __repr__(self):
         return 'anomaly detector'
