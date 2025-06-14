@@ -43,7 +43,7 @@ class Trainer:
             raise TypeError('\'LossFn\' should be a subclass of \'torch.nn.Module\'.')
 
         self.Optimizer = Optimizer
-        self.loss_fn = LossFn(reduction = 'none')
+        self.loss_fn = LossFn()
 
         self.descent = None
         self.batchloss_final = None
@@ -90,8 +90,6 @@ class Trainer:
 
                 out = model(t)
                 loss = self.loss_fn(out, t)
-                loss = torch.mean(loss, 1, dtype = torch.float32)
-                loss = torch.mean(loss, 0, dtype = torch.float32)
 
                 loss.backward()
                 optimizer.step()

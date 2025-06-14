@@ -48,9 +48,9 @@ with torch.no_grad():
         model.pipe.process(array_test, train = False)
         )
 
-
-#plot
 plot = Plot()
+"""
+#before-after
 np.random.seed(seed = 1)    #standardized
 descent = plot.history(trainer.descent, trainer.batchloss_final)
 comparisons_train = plot.before_after(
@@ -61,6 +61,7 @@ comparisons_test = plot.before_after(
     array_test, out_test,
     index = np.random.choice(np.arange(array_test.shape[0]), size = 30, replace = False),
     )
+"""
 
 
 #anomaly detection
@@ -72,9 +73,9 @@ anomaly = sampler.sample(anomaly, size = array_test.shape[0])
 
 anomaly_re = model.flow(anomaly)
 
+#Euclidean distance
 normal_error = (out_test - array_test) ** 2
 normal_error = np.sqrt(normal_error.sum(axis = 1), dtype = 'float64')
-
 anomalous_error = (anomaly_re - anomaly) ** 2
 anomalous_error = np.sqrt(anomalous_error.sum(axis = 1), dtype = 'float64')
 
