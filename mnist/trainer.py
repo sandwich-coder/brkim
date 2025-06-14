@@ -47,6 +47,8 @@ class Trainer:
 
         self.descent = None
         self.batchloss_final = None
+        self.last_array = None
+        self.last_model = None
 
     def __repr__(self):
         return 'trainer'
@@ -107,9 +109,10 @@ class Trainer:
                 ))
             self.descent.append(losses)
 
-        logger.info('Training is done.')
         self.descent = np.concatenate(self.descent, axis = 0)
         self.batchloss_final = losses.mean(axis = 0, dtype = 'float64').tolist()
+        self.last_array = X
+        self.last_model = model
 
         #back to cpu
         model.cpu()

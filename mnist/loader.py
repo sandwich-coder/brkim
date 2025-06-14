@@ -38,6 +38,6 @@ class Loader:
         array = (array - array.min()) / (array.max() - array.min())
         array = (array - np.float64(0.5)) * np.float64(2)
 
-        logger.info('Data has been preprocessed.')
+        logger.info('{name} has been loaded.'.format(name = name))
 
         return array

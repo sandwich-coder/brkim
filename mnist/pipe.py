@@ -33,7 +33,7 @@ class Pipe:
             scaler = MinMaxScaler(feature_range = (-1, 1))
             scaler.fit(X)
             self.scaler = scaler
-            self.previous = X
+            self.last = X
 
         processed = self.scaler.transform(X)
         processed = torch.tensor(processed, dtype = torch.float32)
