@@ -113,6 +113,7 @@ class Trainer:
         self.batchloss_final = losses.mean(axis = 0, dtype = 'float64').tolist()
         self.last_array = X
         self.last_model = model
+        logger.info('Training finished')
 
         #back to cpu
         model.cpu()

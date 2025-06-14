@@ -15,7 +15,6 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 from tqdm import tqdm
 
 from loader import Loader
-from pipe import Pipe
 from autoencoder import Autoencoder
 from trainer import Trainer
 
@@ -29,7 +28,7 @@ array_train = loader.load('mnist')
 array_test = loader.load('mnist', train = False)
 
 #model
-model = Autoencoder(Pipe())
+model = Autoencoder()
 
 #train
 trainer = Trainer()
@@ -48,42 +47,38 @@ with torch.no_grad():
         model.pipe.process(array_test, train = False)
         )
 
+
+# - plot -
+
 plot = Plot()
-"""
-#before-after
-np.random.seed(seed = 1)    #standardized
-descent = plot.history(trainer.descent, trainer.batchloss_final)
-comparisons_train = plot.before_after(
-    array_train, out_train,
-    index = np.random.choice(np.arange(array_train.shape[0]), size = 30, replace = False),
-    )
-comparisons_test = plot.before_after(
-    array_test, out_test,
-    index = np.random.choice(np.arange(array_test.shape[0]), size = 30, replace = False),
-    )
-"""
-
-
-#anomaly detection
-
 sampler = Sampler()
+np.random.seed(seed = 1)    #standardized
 
 anomaly = loader.load('letters', train = False)
 anomaly = sampler.sample(anomaly, size = array_test.shape[0])
 
-anomaly_re = model.flow(anomaly)
+#gradient descent
+descent = plot.history(trainer)
 
-#Euclidean distance
-normal_error = (out_test - array_test) ** 2
-normal_error = np.sqrt(normal_error.sum(axis = 1), dtype = 'float64')
-anomalous_error = (anomaly_re - anomaly) ** 2
-anomalous_error = np.sqrt(anomalous_error.sum(axis = 1), dtype = 'float64')
+#before-after
+comparisons_digits = plot.before_after(
+    array_test,
+    np.random.choice(np.arange(array_test.shape[0]), size = 30, replace = False),
+    model,
+    )
+comparisons_letters = plot.before_after(
+    anomaly,
+    np.random.choice(np.arange(anomaly.shape[0]), size = 30, replace = False),
+    model,
+    )
 
-errors = plot.errors(normal_error, anomalous_error)
+#reconstruction errors
+errors = plot.errors(array_test, anomaly, model)    # This line shows an unexpected figure. I don't know where in the plot function is wrong.
 
 #checkpoint
 pp.show()
 sys.exit('\n\n--checkpoint--')
+
 
 anomaly_sample = sampler.sample(anomaly, size = 1000)
 contaminated = array_test.copy()

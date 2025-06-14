@@ -15,6 +15,8 @@ mpl.rcParams['ytick.labelsize'] = 'xx-small'
 mpl.rcParams['legend.fontsize'] = 'xx-small'
 mpl.rcParams['lines.markersize'] = 1
 mpl.rcParams['lines.linewidth'] = 0.5
+import torch
+from torch import optim, nn
 
 import pandas as pd
 import seaborn as sb
@@ -26,18 +28,25 @@ class Plot:
     def __repr__(self):
         return 'plot'
 
-    def before_after(self, before, after, index):
-        if not (isinstance(before, np.ndarray) and isinstance(after, np.ndarray)):
-            raise TypeError('The before and after should be a \'numpy.ndarray\'.')
-        if not (before.dtype == np.float64 and after.dtype == np.float64):
-            before = before.astype('float64')
-            after = after.astype('float64')
-        if not (before.ndim == 2 and after.ndim == 2):
-            raise ValueError('The before and after must be of the dataset standard.')
+    def before_after(self, X, index, model):
+        if not isinstance(X, np.ndarray):
+            raise TypeError('The array should be a \'numpy.ndarray\'.')
+        if X.dtype != np.float64:
+            X = X.astype('float64')
+        if X.ndim != 2:
+            raise ValueError('The array must be of the standard shape.')
         if not isinstance(index, np.ndarray):
             raise TypeError('The indices should be a \'numpy.ndarray\'.')
+        if index.dtype != np.int64:
+            raise TypeError('The indices must be of \'numpy.int64\'.')
         if index.ndim != 1:
-            raise ValueError('The indices must be 1-dimensional')
+            raise ValueError('The indices must be 1-dimensional.')
+        if not isinstance(model, nn.Module):
+            raise TypeError('The model should be a \'torch.nn.Module\'.')
+        X = X.copy()
+
+        before = X
+        after = model.flow(X)
 
         figs = []
         for lll in index:
@@ -71,16 +80,7 @@ class Plot:
         return figs
 
 
-    def history(self, descent, batchloss_final):
-        if not isinstance(descent, np.ndarray):
-            raise TypeError('The descent should be a \'numpy.ndarray\'.')
-        if descent.ndim != 1:
-            raise ValueError('The descent must be 1-dimensional.')
-        if not isinstance(batchloss_final, (int, float)):
-            raise TypeError('The final batchloss should be a numebr.')
-        if batchloss_final < 0:
-            raise ValueError('The final batchloss must be positive.')
-
+    def history(self, trainer):
         fig = pp.figure(layout = 'constrained', figsize = (10, 7.1))
         ax = fig.add_subplot()
         ax.set_box_aspect(0.7)
@@ -88,12 +88,12 @@ class Plot:
         pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
 
         plot = ax.plot(
-            np.arange(1, descent.shape[0]+1, dtype = 'int64'), descent,
+            np.arange(1, trainer.descent.shape[0]+1, dtype = 'int64'), trainer.descent,
             marker = 'o', markersize = 0.3,
             linestyle = '--', linewidth = 0.1,
             color = 'slategrey',
             label = 'final: {final}'.format(
-                final = round(batchloss_final, ndigits = 4),
+                final = round(trainer.batchloss_final, ndigits = 4),
                 )
             )
         ax.legend()
@@ -101,16 +101,26 @@ class Plot:
         return fig
 
 
-    def errors(self, normal, anomalous):
+    def errors(self, normal, anomalous, model):
         if not (isinstance(normal, np.ndarray) and isinstance(anomalous, np.ndarray)):
-            raise TypeError('The inputs should be a \'numpy.ndarray\'.')
+            raise TypeError('The inputs should be \'numpy.ndarray\'s.')
         if not (normal.dtype == np.float64 and anomalous.dtype == np.float64):
-            normal = normal.astype('float64')
-            anomalous = anomoalous.astype('float64')
-        if not (normal.ndim == 1 and anomalous.ndim == 1):
-            raise ValueError('The inputs must be 1-dimensional.')
-        if normal.shape[0] != anomalous.shape[0]:
-            raise ValueError('The inputs must have the same length.')
+            raise TypeError('The inputs must be of \'numpy.float64\'.')
+        if not (normal.ndim == 2 and anomalous.ndim == 2):
+            raise ValueError('The inputs must be of the standard shapes.')
+        if not isinstance(model, nn.Module):
+            raise TypeError('The model should be a \'torch.nn.Module\'.')
+        normal = normal.copy()
+        anomalous = anomalous.copy()
+
+        normal_out = model.flow(normal)
+        anomalous_out = model.flow(anomalous)
+
+        #Euclidean distance
+        normal_error = (normal_out - normal) ** 2
+        normal_error = np.sqrt(normal_error.sum(axis = 1), dtype = 'float64')
+        anomalous_error = (anomalous_out - anomalous) ** 2
+        anoamlous_error = np.sqrt(anomalous_error.sum(axis = 1), dtype = 'float64')
 
         fig = pp.figure(layout = 'constrained', figsize = (10, 7.1))
         ax = fig.add_subplot()
@@ -119,15 +129,15 @@ class Plot:
         pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
 
         plot_1 = ax.plot(
-            np.arange(1, normal.shape[0]+1, dtype = 'int64'), normal,
+            np.arange(1, normal_error.shape[0]+1, dtype = 'int64'), normal_error,
             marker = 'o', markersize = 0.5, alpha = 0.5,
             linestyle = '',
             color = 'tab:blue',
             label = 'normal',
             )
         plot_2 = ax.plot(
-            np.arange(1, anomalous.shape[0]+1, dtype = 'int64'), anomalous,
-            marker = 'o', markersize = 1, alpha = 0.5,
+            np.arange(1, anomalous_error.shape[0]+1, dtype = 'int64'), anomalous_error,
+            marker = 'o', markersize = 0.5, alpha = 0.5,
             linestyle = '',
             color = 'tab:red',
             label = 'anomalous',
