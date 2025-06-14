@@ -51,5 +51,5 @@ class Pipe:
 
         _ = T.numpy()
         unprocessed = _.astype('float64')
-        unprocessed = self.scaler.inverse_transform(T)
+        unprocessed = self.scaler.inverse_transform(unprocessed)
         return unprocessed
