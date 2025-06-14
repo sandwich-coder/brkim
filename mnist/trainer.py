@@ -3,6 +3,7 @@ import os, sys
 import time
 import types
 import logging
+logger = logging.getLogger(name = __name__)
 import numpy as np
 
 from tqdm import tqdm
@@ -10,6 +11,14 @@ import torch
 from torch import optim, nn
 from torch.utils.data import DataLoader
 
+
+if torch.cuda.is_available():
+    logger.info('CUDA is available.')
+    device = torch.device('cuda')
+    logger.info('GPU is assigned to \'device\'.')
+else:
+    device = torch.device('cpu')
+    logger.info('CPU is assigned to \'device\' as fallback.')
 
 learning_rate = 0.0001
 epsilon = 1e-7
@@ -20,6 +29,7 @@ epochs = 100
 class Trainer:
     """
     reference = [
+        'device',
         'learning_rate',
         'epsilon',
         'batch_size',
@@ -41,13 +51,24 @@ class Trainer:
     def __repr__(self):
         return 'trainer'
     
-    def train(self, data, model):
-        if not isinstance(data, torch.Tensor):
-            raise TypeError('The data should be a \'torch.Tensor\'.')
-        if data.dtype != torch.float32:
-            data = data.to(torch.float32)
+    def train(self, X, model):
+        if not isinstance(X, np.ndarray):
+            raise TypeError('The array should be a \'numpy.ndarray\'.')
+        if X.dtype != np.float64:
+            X = X.astype('float64')
+        if X.ndim != 2:
+            raise ValueError('The array must be of the standard shape.')
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
+        X = X.copy()
+
+        #processed
+        data = model.pipe.process(X, train = True)
+
+        #to gpu
+        data = data.to(device)
+        model.to(device)
+        logger.info('GPU is allocated to \'data\' and \'model\'.')
 
         optimizer = self.Optimizer(
             model.parameters(),
@@ -61,13 +82,14 @@ class Trainer:
             shuffle = True,
             )
         self.descent = []
+        logger.info('Training begins.')
         for lll in range(epochs):
             model.train()
             losses = []
-            for x in tqdm(loader, leave = False, ncols = 70):
+            for t in tqdm(loader, leave = False, ncols = 70):
 
-                out = model(x)
-                loss = self.loss_fn(out, x)
+                out = model(t)
+                loss = self.loss_fn(out, t)
                 loss = torch.mean(loss, 1, dtype = torch.float32)
                 loss = torch.mean(loss, 0, dtype = torch.float32)
 
@@ -87,5 +109,9 @@ class Trainer:
                 ))
             self.descent.append(losses)
 
+        logger.info('Training is done.')
         self.descent = np.concatenate(self.descent, axis = 0)
         self.batchloss_final = losses.mean(axis = 0, dtype = 'float64').tolist()
+
+        #back to cpu
+        model.cpu()

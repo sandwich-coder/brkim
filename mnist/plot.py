@@ -3,6 +3,7 @@ import os, sys
 import time
 import types
 import logging
+logger = logging.getLogger(__name__)
 import numpy as np
 import matplotlib as mpl
 from matplotlib import pyplot as pp
@@ -94,6 +95,42 @@ class Plot:
             label = 'final: {final}'.format(
                 final = round(batchloss_final, ndigits = 4),
                 )
+            )
+        ax.legend()
+
+        return fig
+
+
+    def errors(self, normal, anomalous):
+        if not (isinstance(normal, np.ndarray) and isinstance(anomalous, np.ndarray)):
+            raise TypeError('The inputs should be a \'numpy.ndarray\'.')
+        if not (normal.dtype == np.float64 and anomalous.dtype == np.float64):
+            normal = normal.astype('float64')
+            anomalous = anomoalous.astype('float64')
+        if not (normal.ndim == 1 and anomalous.ndim == 1):
+            raise ValueError('The inputs must be 1-dimensional.')
+        if normal.shape[0] != anomalous.shape[0]:
+            raise ValueError('The inputs must have the same length.')
+
+        fig = pp.figure(layout = 'constrained', figsize = (10, 7.1))
+        ax = fig.add_subplot()
+        ax.set_box_aspect(0.7)
+        ax.set_title('Reconstruction Errors', fontsize = 'medium')
+        pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
+
+        plot_1 = ax.plot(
+            np.arange(1, normal.shape[0]+1, dtype = 'int64'), normal,
+            marker = 'o', markersize = 0.5, alpha = 0.5,
+            linestyle = '',
+            color = 'tab:blue',
+            label = 'normal',
+            )
+        plot_2 = ax.plot(
+            np.arange(1, anomalous.shape[0]+1, dtype = 'int64'), anomalous,
+            marker = 'o', markersize = 1, alpha = 0.5,
+            linestyle = '',
+            color = 'tab:red',
+            label = 'anomalous',
             )
         ax.legend()
 

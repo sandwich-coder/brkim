@@ -3,6 +3,7 @@ import os, sys
 import time
 import types
 import logging
+logger = logging.getLogger(__name__)
 import numpy as np
 
 from torchvision.datasets import EMNIST
@@ -36,5 +37,7 @@ class Loader:
         array = array.reshape([array.shape[0], -1])
         array = (array - array.min()) / (array.max() - array.min())
         array = (array - np.float64(0.5)) * np.float64(2)
+
+        logger.info('Data has been preprocessed.')
 
         return array
