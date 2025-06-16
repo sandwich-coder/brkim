@@ -77,7 +77,14 @@ class Plot:
                 )
 
             figs.append(fig)
-        
+
+        if save:
+            os.makedirs('figures/before-after', exist_ok = True)
+            for llll in range(len(index)):
+                figs[llll].savefig('figures/before-after/{index}.png'.format(
+                    index = index[llll],
+                    ), dpi = 300)
+
         return figs
 
 
@@ -100,5 +107,9 @@ class Plot:
                 )
             )
         ax.legend()
+
+        if save:
+            os.makedirs('figures', exist_ok = True)
+            fig.savefig('figures/history.png', dpi = 300)
 
         return fig

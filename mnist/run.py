@@ -48,7 +48,6 @@ with torch.no_grad():
         )
 
 
-"""
 # - plot -
 
 plot = Plot()
@@ -59,23 +58,23 @@ anomaly = loader.load('letters', train = False)
 anomaly = sampler.sample(anomaly, size = array_test.shape[0])
 
 #gradient descent
-descent = plot.history(trainer)
+descent = plot.history(trainer, save = True)
 
 #before-after
 comparisons_digits = plot.before_after(
     array_test,
     np.random.choice(np.arange(array_test.shape[0]), size = 30, replace = False),
     model,
+    save = True,
     )
 comparisons_letters = plot.before_after(
     anomaly,
     np.random.choice(np.arange(anomaly.shape[0]), size = 30, replace = False),
     model,
+    save = True,
     )
-"""
 
 #checkpoint
-pp.show()
 sys.exit('\n\n--checkpoint--')
 
 
