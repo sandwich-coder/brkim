@@ -68,9 +68,21 @@ comparisons_digits = plot.before_after(
 #reconstruction errors
 normal = array_train.copy()
 normal = sampler.sample(normal, size = 30000)
-anomalous = loader.load('letters')
+anomalous = loader.load('cloths')
 anomalous = sampler.sample(anomalous, size = 30000)
 errors = plot.errors(normal, anomalous, model, save = True)
+
+#anomaly reconstructions
+anomalous_reconstructions = plot.before_after(
+    anomalous,
+    np.random.choice(np.arange(len(anomalous)), size = 30, replace = False),
+    model,
+    )
+os.makedirs('figures/before-after-anomalous', exist_ok = True)
+for l in range(len(anomalous_reconstructions)):
+    anomalous_reconstructions[l].savefig('figures/before-after-anomalous/{count}st.png'.format(
+        count = l+1,
+        ))
 
 """
 print('\n\n')
