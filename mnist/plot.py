@@ -113,3 +113,59 @@ class Plot:
             fig.savefig('figures/history.png', dpi = 300)
 
         return fig
+
+
+    def errors(self, normal, anomalous, model, save = False):
+        if not isinstance(normal, np.ndarray):
+            raise TypeError('The normal array should be a \'numpy.ndarray\'.')
+        if normal.dtype != np.float64:
+            normal = normal.astype('float64')
+        if normal.ndim != 2:
+            raise ValueError('The shape must be the dataset standard.')
+        if not isinstance(anomalous, np.ndarray):
+            raise TypeError('The anomalous array should be a \'numpy.ndarray\'.')
+        if anomalous.dtype != np.float64:
+            anomalous = anomalous.astype('float64')
+        if anomalous.ndim != 2:
+            raise ValueError('The shape must be the dataset standard.')
+        if not isinstance(model, nn.Module):
+            raise TypeError('The model should be a \'torch.nn.Module\'.')
+        if not isinstance(save, bool):
+            raise TypeError('\'save\' should be boolean.')
+
+        normal_out = model.flow(normal)
+        anomalous_out = model.flow(anomalous)
+
+        normal_error = np.sqrt(np.sum((normal_out - normal) ** 2, axis = 1), dtype = 'float64')
+        anomalous_error = np.sqrt(np.sum((anomalous_out - anomalous) ** 2, axis = 1), dtype = 'float64')
+
+        fig = pp.figure(layout = 'constrained')
+        ax = fig.add_subplot()
+        ax.set_box_aspect(1)
+        ax.set_title('Reconstruction Errors', fontsize = 'medium')
+        pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
+
+        plot_1 = ax.plot(
+            range(1, len(normal_error)+1), normal_error,
+            marker = 'o', markersize = 5000 / len(normal_error),
+            alpha = 0.8,
+            linestyle = '',
+            color = 'tab:blue',
+            label = 'normal',
+            )
+        plot_2 = ax.plot(
+            range(1, len(anomalous_error)+1), anomalous_error,
+            marker = 'o', markersize = 5000 / len(anomalous_error),
+            alpha = 0.8,
+            linestyle = '',
+            color = 'red',
+            label = 'anomalous',
+            )
+
+        ax.legend()
+
+        if save:
+            os.makedirs('figures', exist_ok = True)
+            fig.savefig('figures/errors.png', dpi = 300)
+
+        return fig

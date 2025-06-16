@@ -54,7 +54,6 @@ plot = Plot()
 sampler = Sampler()
 np.random.seed(seed = 1)    #standardized
 
-"""
 #gradient descent
 descent = plot.history(trainer, save = True)
 
@@ -65,44 +64,13 @@ comparisons_digits = plot.before_after(
     model,
     save = True,
     )
-"""
 
-
+#reconstruction errors
+normal = array_train.copy()
+normal = sampler.sample(normal, size = 10000)
 anomalous = loader.load('letters')
-anomalous = sampler.sample(anomalous, size = 3000)
-normal = sampler.sample(array_train, size = 3000)
-
-normal_out = model.flow(normal)
-anomalous_out = model.flow(anomalous)
-
-normal_error = np.sqrt(np.sum((normal_out - normal) ** 2, axis = 1), dtype = 'float64')
-anomalous_error = np.sqrt(np.sum((anomalous_out - anomalous) ** 2, axis = 1), dtype = 'float64')
-
-fig = pp.figure(layout = 'constrained')
-ax = fig.add_subplot()
-ax.set_box_aspect(0.7)
-ax.set_title('Reconstruction Errors', fontsize = 'medium')
-plot1 = ax.plot(
-    range(len(normal_error)), normal_error,
-    marker = 'o',
-    alpha = 0.8,
-    linestyle = '',
-    color = 'tab:blue',
-    label = 'normal',
-    )
-plot2 = ax.plot(
-    range(len(anomalous_error)), anomalous_error,
-    marker = 'o',
-    alpha = 0.8,
-    linestyle = '',
-    color = 'tab:red',
-    label = 'anomalous',
-    )
-ax.legend()
-
-#checkpoint
-print('Show the figures.')
-sys.exit('\n\n\n---checkpoint---')
+anomalous = sampler.sample(anomalous, size = 10000)
+errors = plot.errors(normal, anomalous, model, save = True)
 
 """
 print('\n\n')
