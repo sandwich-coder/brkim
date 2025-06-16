@@ -5,11 +5,11 @@ import types
 import logging
 logger = logging.getLogger(name = __name__)
 import numpy as np
-
-from tqdm import tqdm
 import torch
 from torch import optim, nn
 from torch.utils.data import DataLoader
+
+from tqdm import tqdm
 
 
 if torch.cuda.is_available():
