@@ -38,7 +38,7 @@ class Autoencoder(nn.Module):
 
     def __repr__(self):
         return 'autoencoder'
-    
+
     def forward(self, t):
 
         t = self.encoder(t)
@@ -46,7 +46,7 @@ class Autoencoder(nn.Module):
 
         return t
 
-    
+
     def process(self, X, train = True):
         if not isinstance(X, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
