@@ -15,7 +15,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 from tqdm import tqdm
 
 from loader import Loader
-from autoencoder import Autoencoder
+from models import Autoencoder
 from trainer import Trainer
 
 from sampler import Sampler
@@ -41,13 +41,14 @@ out_test = model.flow(array_test)
 #encoded
 with torch.no_grad():
     encoded_train = model.encoder(
-        model.pipe.process(array_train, train = False)
+        model.process(array_train, train = False)
         )
     encoded_test = model.encoder(
-        model.pipe.process(array_test, train = False)
+        model.process(array_test, train = False)
         )
 
 
+"""
 # - plot -
 
 plot = Plot()
@@ -71,9 +72,7 @@ comparisons_letters = plot.before_after(
     np.random.choice(np.arange(anomaly.shape[0]), size = 30, replace = False),
     model,
     )
-
-#reconstruction errors
-errors = plot.errors(array_test, anomaly, model)    # This line shows an unexpected figure. I don't know where in the plot function is wrong.
+"""
 
 #checkpoint
 pp.show()

@@ -10,61 +10,10 @@ from torch import optim, nn
 
 from sklearn.preprocessing import MinMaxScaler
 
-class Pipe:
-    def __init__(self):
-        self.scaler = None
-        self.previous = None
-    def __repr__(self):
-        return 'pipeline'
-
-    def process(self, X, train = True):
-        if not isinstance(X, np.ndarray):
-            raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if X.ndim != 2:
-            raise ValueError('The input must be of the standard shape.')
-        if X.dtype != np.float64:
-            X = X.astype('float64')
-        X = X.copy()
-
-        if not train:
-            pass
-        else:
-            scaler = MinMaxScaler(feature_range = (-1, 1))
-            scaler.fit(X)
-            self.scaler = scaler
-            self.last = X
-
-        processed = self.scaler.transform(X)
-        processed = torch.tensor(processed, dtype = torch.float32)
-        return processed
-        
-
-    def unprocess(self, T):
-        if not isinstance(T, torch.Tensor):
-            raise TypeError('The input should be a \'torch.Tensor\'.')
-        if T.dtype != torch.float32:
-            T = T.to(torch.float32)
-        if T.dim() != 2:
-            raise ValueError('The input must be of the standard shape.')
-        T = torch.clone(T)
-
-        _ = T.numpy()
-        unprocessed = _.astype('float64')
-        unprocessed = self.scaler.inverse_transform(unprocessed)
-        return unprocessed
-
-
-
 
 class Autoencoder(nn.Module):
-    """
-    reference = [
-        'Pipe',
-        ]
-    """
     def __init__(self):
         super().__init__()
-        self.pipe = Pipe()
 
         self.encoder = nn.Sequential(
             nn.Sequential(nn.Linear(784, 729), nn.GELU()),
@@ -91,7 +40,6 @@ class Autoencoder(nn.Module):
         return 'autoencoder'
     
     def forward(self, t):
-        t = torch.clone(t)
 
         t = self.encoder(t)
         t = self.decoder(t)
@@ -99,6 +47,40 @@ class Autoencoder(nn.Module):
         return t
 
     
+    def process(self, X, train = True):
+        if not isinstance(X, np.ndarray):
+            raise TypeError('The input should be a \'numpy.ndarray\'.')
+        if X.dtype != np.float64:
+            X = X.astype('float64')
+        if X.ndim != 2:
+            raise ValueError('The input must be of the standard shape.')
+
+        if not train:
+            pass
+        else:
+            scaler = MinMaxScaler(feature_range = (-1, 1))
+            scaler.fit(X)
+            self.fit_scaler = scaler
+
+        processed = self.fit_scaler.transform(X)
+        processed = torch.tensor(processed, dtype = torch.float32)
+        return processed
+
+
+    def unprocess(self, T):
+        if not isinstance(T, torch.Tensor):
+            raise TypeError('The input should be a \'torch.Tensor\'.')
+        if T.dtype != torch.float32:
+            T = T.to(torch.float32)
+        if T.dim() != 2:
+            raise ValueError('The input must be of the standard shape.')
+
+        _ = T.numpy()
+        unprocessed = _.astype('float64')
+        unprocessed = self.fit_scaler.inverse_transform(unprocessed)
+        return unprocessed
+
+
     def flow(self, X):
         if not isinstance(X, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
@@ -106,11 +88,10 @@ class Autoencoder(nn.Module):
             X = X.astype('float64')
         if X.ndim != 2:
             raise ValueError('The input must be of the standard shape.')
-        X = X.copy()
 
-        X = self.pipe.process(X, train = False)
+        X = self.process(X, train = False)
         X = self.forward(X)
         X = X.detach()    ###
-        X = self.pipe.unprocess(X)
+        X = self.unprocess(X)
 
         return X

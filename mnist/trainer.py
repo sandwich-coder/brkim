@@ -23,7 +23,7 @@ else:
 learning_rate = 0.0001
 epsilon = 1e-7
 batch_size = 32
-epochs = 100
+epochs = 10
 
 
 class Trainer:
@@ -47,8 +47,8 @@ class Trainer:
 
         self.descent = None
         self.batchloss_final = None
-        self.last_array = None
-        self.last_model = None
+        self.trained_array = None
+        self.trained_model = None
 
     def __repr__(self):
         return 'trainer'
@@ -62,10 +62,9 @@ class Trainer:
             raise ValueError('The array must be of the standard shape.')
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
-        X = X.copy()
 
         #processed
-        data = model.pipe.process(X, train = True)
+        data = model.process(X)
 
         #to gpu
         data = data.to(device)
@@ -90,8 +89,8 @@ class Trainer:
             losses = []
             for t in tqdm(loader, leave = False, ncols = 70):
 
-                out = model(t)
-                loss = self.loss_fn(out, t)
+                output = model(t)
+                loss = self.loss_fn(output, t)
 
                 loss.backward()
                 optimizer.step()
@@ -111,8 +110,8 @@ class Trainer:
 
         self.descent = np.concatenate(self.descent, axis = 0)
         self.batchloss_final = losses.mean(axis = 0, dtype = 'float64').tolist()
-        self.last_array = X
-        self.last_model = model
+        self.trained_array = X.copy()
+        self.trained_model = model
         logger.info('Training finished')
 
         #back to cpu

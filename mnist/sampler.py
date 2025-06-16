@@ -26,7 +26,6 @@ class Sampler:
             raise TypeError('\'axis\' should be an integer.')
         if not isinstance(replace, bool):
             raise TypeError('\'replace\' should be boolean.')
-        X = X.copy()
 
         index = np.random.choice(
             X.shape[axis],

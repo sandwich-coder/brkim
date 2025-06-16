@@ -28,7 +28,7 @@ class Plot:
     def __repr__(self):
         return 'plot'
 
-    def before_after(self, X, index, model):
+    def before_after(self, X, index, model, save = False):
         if not isinstance(X, np.ndarray):
             raise TypeError('The array should be a \'numpy.ndarray\'.')
         if X.dtype != np.float64:
@@ -38,14 +38,15 @@ class Plot:
         if not isinstance(index, np.ndarray):
             raise TypeError('The indices should be a \'numpy.ndarray\'.')
         if index.dtype != np.int64:
-            raise TypeError('The indices must be of \'numpy.int64\'.')
+            raise ValueError('The indices must be of \'numpy.int64\'.')
         if index.ndim != 1:
             raise ValueError('The indices must be 1-dimensional.')
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
-        X = X.copy()
+        if not isinstance(save, bool):
+            raise TypeError('The \'save\' should be boolean.')
 
-        before = X
+        before = X.copy()
         after = model.flow(X)
 
         figs = []
@@ -80,7 +81,9 @@ class Plot:
         return figs
 
 
-    def history(self, trainer):
+    def history(self, trainer, save = False):
+        if not isinstance(save, bool):
+            raise TypeError('The \'save\' should be boolean.')
         fig = pp.figure(layout = 'constrained', figsize = (10, 7.1))
         ax = fig.add_subplot()
         ax.set_box_aspect(0.7)
@@ -95,52 +98,6 @@ class Plot:
             label = 'final: {final}'.format(
                 final = round(trainer.batchloss_final, ndigits = 4),
                 )
-            )
-        ax.legend()
-
-        return fig
-
-
-    def errors(self, normal, anomalous, model):
-        if not (isinstance(normal, np.ndarray) and isinstance(anomalous, np.ndarray)):
-            raise TypeError('The inputs should be \'numpy.ndarray\'s.')
-        if not (normal.dtype == np.float64 and anomalous.dtype == np.float64):
-            raise TypeError('The inputs must be of \'numpy.float64\'.')
-        if not (normal.ndim == 2 and anomalous.ndim == 2):
-            raise ValueError('The inputs must be of the standard shapes.')
-        if not isinstance(model, nn.Module):
-            raise TypeError('The model should be a \'torch.nn.Module\'.')
-        normal = normal.copy()
-        anomalous = anomalous.copy()
-
-        normal_out = model.flow(normal)
-        anomalous_out = model.flow(anomalous)
-
-        #Euclidean distance
-        normal_error = (normal_out - normal) ** 2
-        normal_error = np.sqrt(normal_error.sum(axis = 1), dtype = 'float64')
-        anomalous_error = (anomalous_out - anomalous) ** 2
-        anoamlous_error = np.sqrt(anomalous_error.sum(axis = 1), dtype = 'float64')
-
-        fig = pp.figure(layout = 'constrained', figsize = (10, 7.1))
-        ax = fig.add_subplot()
-        ax.set_box_aspect(0.7)
-        ax.set_title('Reconstruction Errors', fontsize = 'medium')
-        pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
-
-        plot_1 = ax.plot(
-            np.arange(1, normal_error.shape[0]+1, dtype = 'int64'), normal_error,
-            marker = 'o', markersize = 0.5, alpha = 0.5,
-            linestyle = '',
-            color = 'tab:blue',
-            label = 'normal',
-            )
-        plot_2 = ax.plot(
-            np.arange(1, anomalous_error.shape[0]+1, dtype = 'int64'), anomalous_error,
-            marker = 'o', markersize = 0.5, alpha = 0.5,
-            linestyle = '',
-            color = 'tab:red',
-            label = 'anomalous',
             )
         ax.legend()
 
