@@ -67,9 +67,9 @@ comparisons_digits = plot.before_after(
 
 #reconstruction errors
 normal = array_train.copy()
-normal = sampler.sample(normal, size = 10000)
+normal = sampler.sample(normal, size = 30000)
 anomalous = loader.load('letters')
-anomalous = sampler.sample(anomalous, size = 10000)
+anomalous = sampler.sample(anomalous, size = 30000)
 errors = plot.errors(normal, anomalous, model, save = True)
 
 """

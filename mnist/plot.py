@@ -147,7 +147,7 @@ class Plot:
 
         plot_1 = ax.plot(
             range(1, len(normal_error)+1), normal_error,
-            marker = 'o', markersize = 5000 / len(normal_error),
+            marker = 'o', markersize = 8000 / len(normal_error),
             alpha = 0.8,
             linestyle = '',
             color = 'tab:blue',
@@ -155,7 +155,7 @@ class Plot:
             )
         plot_2 = ax.plot(
             range(1, len(anomalous_error)+1), anomalous_error,
-            marker = 'o', markersize = 5000 / len(anomalous_error),
+            marker = 'o', markersize = 8000 / len(anomalous_error),
             alpha = 0.8,
             linestyle = '',
             color = 'red',
