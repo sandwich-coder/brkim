@@ -15,8 +15,6 @@ mpl.rcParams['ytick.labelsize'] = 'xx-small'
 mpl.rcParams['legend.fontsize'] = 'xx-small'
 mpl.rcParams['lines.markersize'] = 1
 mpl.rcParams['lines.linewidth'] = 0.5
-import torch
-from torch import optim, nn
 
 import pandas as pd
 import seaborn as sb
