@@ -15,7 +15,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 from tqdm import tqdm
 
 from loader import Loader
-from models import Autoencoder
+from models.autoencoder import Autoencoder
 from trainer import Trainer
 
 from sampler import Sampler
@@ -83,6 +83,9 @@ for l in range(len(anomalous_reconstructions)):
     anomalous_reconstructions[l].savefig('figures/before-after-anomalous/{count}st.png'.format(
         count = l+1,
         ))
+
+#anomaly detection
+anomalous = sampler.sample(anomalous, size = 3000)
 
 """
 print('\n\n')

@@ -40,6 +40,7 @@ class Autoencoder(nn.Module):
         return 'autoencoder'
 
     def forward(self, t):
+        t = torch.clone(t)
 
         t = self.encoder(t)
         t = self.decoder(t)
@@ -54,6 +55,7 @@ class Autoencoder(nn.Module):
             X = X.astype('float64')
         if X.ndim != 2:
             raise ValueError('The input must be of the standard shape.')
+        X = X.copy()
 
         if not train:
             pass
@@ -74,6 +76,7 @@ class Autoencoder(nn.Module):
             T = T.to(torch.float32)
         if T.dim() != 2:
             raise ValueError('The input must be of the standard shape.')
+        T = torch.clone(T)
 
         _ = T.numpy()
         unprocessed = _.astype('float64')
@@ -88,6 +91,7 @@ class Autoencoder(nn.Module):
             X = X.astype('float64')
         if X.ndim != 2:
             raise ValueError('The input must be of the standard shape.')
+        X = X.copy()
 
         X = self.process(X, train = False)
         X = self.forward(X)

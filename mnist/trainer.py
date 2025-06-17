@@ -62,6 +62,7 @@ class Trainer:
             raise ValueError('The array must be of the standard shape.')
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
+        X = X.copy()
 
         #processed
         data = model.process(X)

@@ -45,6 +45,8 @@ class Plot:
             raise TypeError('The model should be a \'torch.nn.Module\'.')
         if not isinstance(save, bool):
             raise TypeError('The \'save\' should be boolean.')
+        X = X.copy()
+        index = index.copy()
 
         before = X.copy()
         after = model.flow(X)
@@ -132,6 +134,8 @@ class Plot:
             raise TypeError('The model should be a \'torch.nn.Module\'.')
         if not isinstance(save, bool):
             raise TypeError('\'save\' should be boolean.')
+        normal = normal.copy()
+        anomalous = anomalous.copy()
 
         normal_out = model.flow(normal)
         anomalous_out = model.flow(anomalous)
@@ -160,6 +164,20 @@ class Plot:
             linestyle = '',
             color = 'red',
             label = 'anomalous',
+            )
+        ax.axhline(
+            np.median(normal_error),
+            marker = '',
+            linestyle = '--',
+            color = 'grey',
+            label = 'median (normal)',
+            )
+        ax.axhline(
+            np.median(anomalous_error),
+            marker = '',
+            linestyle = '--',
+            color = 'grey',
+            label = 'median (anomalous)',
             )
 
         ax.legend()
