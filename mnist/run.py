@@ -3,16 +3,11 @@ logging.basicConfig(level = 'INFO')
 logger = logging.getLogger(__name__)
 import torch
 from torch import optim, nn
-from torch.utils.data import DataLoader
 
 import pandas as pd
 import seaborn as sb
 from sklearn.ensemble import IsolationForest
-from sklearn.neighbors import KernelDensity
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import precision_score, recall_score, f1_score
-from tqdm import tqdm
 
 from loader import Loader
 from models.autoencoder import Autoencoder
