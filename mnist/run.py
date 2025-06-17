@@ -1,12 +1,7 @@
 from basic import *
 logging.basicConfig(level = 'INFO')
-logger = logging.getLogger(__name__)
-import torch
-from torch import optim, nn
+logger = logging.getLogger(name = __name__)
 
-import pandas as pd
-import seaborn as sb
-from sklearn.ensemble import IsolationForest
 from sklearn.metrics import precision_score, recall_score, f1_score
 
 from loader import Loader
