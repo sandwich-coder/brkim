@@ -80,7 +80,7 @@ for l in range(len(anomalous_reconstructions)):
         ))
 
 
-# - anomaly detection -
+# - anomaly detection (scan) -
 
 contaminated = np.concatenate([
     sampler.sample(normal, size = 27000),
@@ -106,6 +106,10 @@ print('        recall (train): {recall}'.format(
 print('            F1 (train): {f1}'.format(
     f1 = f1_score(truth, prediction),
     ))
+
+
+"""
+# - anomaly detection (test) -
 
 contaminated = np.concatenate([
     sampler.sample(
@@ -137,3 +141,4 @@ print('         recall (test): {recall}'.format(
 print('             F1 (test): {f1}'.format(
     f1 = f1_score(truth, prediction),
     ))
+"""
