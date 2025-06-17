@@ -68,7 +68,7 @@ class Trainer:
         #to gpu
         data = data.to(device)
         model.to(device)
-        logger.info('GPU is allocated to \'data\' and \'model\'.')
+        logger.info('\'device\' is allocated to \'data\' and \'model\'.')
 
         optimizer = self.Optimizer(
             model.parameters(),
