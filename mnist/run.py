@@ -84,18 +84,61 @@ for l in range(len(anomalous_reconstructions)):
         count = l+1,
         ))
 
-#anomaly detection
-anomalous = sampler.sample(anomalous, size = 3000)
 
-"""
+# - anomaly detection -
+
+contaminated = np.concatenate([
+    sampler.sample(normal, size = 27000),
+    sampler.sample(anomalous, size = 3000),
+    ], axis = 0)
+contaminated_out = model.flow(contaminated)
+
+truth = np.zeros([30000], dtype = 'int64')
+truth[27000:] = 1
+truth = truth.astype('bool')
+
+#Euclidean distance
+error = np.sqrt(np.sum((contaminated_out - contaminated) ** 2, axis = 1), dtype = 'float64')
+prediction = np.where(error >= 9, True, False)
+
 print('\n\n')
-print('      precision: {precision}'.format(
+print('     precision (train): {precision}'.format(
     precision = precision_score(truth, prediction),
     ))
-print('         recall: {recall}'.format(
+print('        recall (train): {recall}'.format(
     recall = recall_score(truth, prediction),
     ))
-print('             F1: {f1}'.format(
+print('            F1 (train): {f1}'.format(
     f1 = f1_score(truth, prediction),
     ))
-"""
+
+contaminated = np.concatenate([
+    sampler.sample(
+        loader.load('digits', train = False),
+        size = 27000,
+        ),
+    sampler.sample(
+        loader.load('cloths', train = False),
+        size = 3000,
+        ),
+    ], axis = 0)
+contaminated_out = model.flow(contaminated)
+
+truth = np.zeros([30000], dtype = 'int64')
+truth[27000:] = 1
+truth = truth.astype('bool')
+
+#Euclidean distance
+error = np.sqrt(np.sum((contaminated_out - contaminated) ** 2, axis = 1), dtype = 'float64')
+prediction = np.where(error >= 9, True, False)
+
+print('\n\n')
+print('      precision (test): {precision}'.format(
+    precision = precision_score(truth, prediction),
+    ))
+print('         recall (test): {recall}'.format(
+    recall = recall_score(truth, prediction),
+    ))
+print('             F1 (test): {f1}'.format(
+    f1 = f1_score(truth, prediction),
+    ))
