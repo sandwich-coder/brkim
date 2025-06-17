@@ -6,8 +6,7 @@ import logging
 logger = logging.getLogger(name = __name__)
 import numpy as np
 import torch
-from torch import optim, nn
-from torch.utils.data import DataLoader
+from torch import optim
 
 from tqdm import tqdm
 

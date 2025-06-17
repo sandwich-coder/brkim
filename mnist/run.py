@@ -12,7 +12,6 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 from loader import Loader
 from models.autoencoder import Autoencoder
 from trainer import Trainer
-
 from sampler import Sampler
 from plot import Plot
 

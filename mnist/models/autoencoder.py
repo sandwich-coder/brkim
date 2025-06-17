@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger(__name__)
 import numpy as np
 import torch
-from torch import optim, nn
+from torch import nn
 
 from sklearn.preprocessing import MinMaxScaler
 
