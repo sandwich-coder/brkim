@@ -96,15 +96,11 @@ truth = truth.astype('bool')
 
 #Euclidean distance
 error = np.sqrt(np.sum((contaminated_out - contaminated) ** 2, axis = 1), dtype = 'float64')
-if platform.machine() == 'arm64':
-    subprocess.run(
-        'open figures/errors.png',
-        shell = True,
-        )
-    threshold = input('threshold: ')    # Threshold is determined manually by observing the error plot.
-    threshold = float(threshold)
-else:
-    sys.exit(' - Experiment done - ')
+
+errors.show()
+threshold = input('threshold: ')    # Threshold is determined manually by observing the error plot.
+threshold = float(threshold)
+
 prediction = np.where(error >= threshold, True, False)
 
 print('\n\n')
