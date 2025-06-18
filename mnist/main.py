@@ -7,6 +7,7 @@ else:
 from basic import *
 logging.basicConfig(level = 'INFO')
 logger = logging.getLogger(name = __name__)
+import platform
 
 from sklearn.metrics import precision_score, recall_score, f1_score
 
@@ -95,8 +96,16 @@ truth = truth.astype('bool')
 
 #Euclidean distance
 error = np.sqrt(np.sum((contaminated_out - contaminated) ** 2, axis = 1), dtype = 'float64')
-threshold = input('threshold: ')    # Threshold is determined manually by observing the error plot.
-prediction = np.where(error >= 9, True, False)
+if platform.machine() == 'arm64':
+    subprocess.run(
+        'open figures/errors.png',
+        shell = True,
+        )
+    threshold = input('threshold: ')    # Threshold is determined manually by observing the error plot.
+    threshold = float(threshold)
+else:
+    threshold = 9
+prediction = np.where(error >= threshold, True, False)
 
 print('\n\n')
 print('     precision (train): {precision}'.format(
