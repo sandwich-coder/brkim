@@ -104,7 +104,7 @@ if platform.machine() == 'arm64':
     threshold = input('threshold: ')    # Threshold is determined manually by observing the error plot.
     threshold = float(threshold)
 else:
-    sys.exit('Experiment done')
+    sys.exit(' - Experiment done - ')
 prediction = np.where(error >= threshold, True, False)
 
 print('\n\n')
