@@ -2,8 +2,8 @@ import sys, os, subprocess    # These will be imported only in the main.
 
 from basic import *
 logger = logging.getLogger(name = __name__)
-from torch.utils.data import DataLoader
 
+from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 

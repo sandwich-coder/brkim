@@ -7,8 +7,8 @@ else:
 from basic import *
 logging.basicConfig(level = 'INFO')
 logger = logging.getLogger(name = __name__)
-import platform
 
+import platform
 from sklearn.metrics import precision_score, recall_score, f1_score
 
 from loader import Loader
@@ -98,7 +98,7 @@ truth = truth.astype('bool')
 error = np.sqrt(np.sum((contaminated_out - contaminated) ** 2, axis = 1), dtype = 'float64')
 if platform.machine() == 'arm64':
     subprocess.run(
-        'open figures/errors.png'.split(),
+        'open figures/errors.png',
         shell = True,
         )
     threshold = input('threshold: ')    # Threshold is determined manually by observing the error plot.
