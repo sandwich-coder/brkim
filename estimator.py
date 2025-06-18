@@ -1,8 +1,9 @@
 from copy import deepcopy as copy
 import os, sys
-import time
 import types
+import time
 import logging
+logger = logging.getLogger(name = __name__)
 import numpy as np
 from scipy.spatial.distance import pdist, cdist
 
