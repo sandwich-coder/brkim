@@ -1,5 +1,5 @@
 from copy import deepcopy as copy
-import os, sys
+import os, sys, subprocess
 import types
 import time
 import logging
@@ -15,6 +15,16 @@ from models.autoencoder import Autoencoder
 from trainer import Trainer
 from sampler import Sampler
 from plot import Plot
+
+python_version = subprocess.run(
+    'python --version'.split(),
+    capture_output = True, text = True,
+    )
+python_version = python_version.stdout.split()[1]
+if python_version[:4] != '3.12':
+    raise RuntimeError('Check the Python version.')
+else:
+    logger.info('Python version checked')
 
 
 #load
