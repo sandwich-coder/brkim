@@ -1,5 +1,5 @@
 from copy import deepcopy as copy
-from dataclasses import dataclass
+from dataclasses import dataclass    # All the classes will be replaced by frozens.
 import types
 import time
 import logging
