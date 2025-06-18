@@ -2,16 +2,11 @@ import sys, os, subprocess
 if sys.version_info[:2] != (3, 12):
     raise RuntimeError('This module is intended to be executed on Python 3.12.')
 else:
-    logger.info('Python version checked')
+    print('Python version checked')
 
-from copy import deepcopy as copy
-import types
-import time
-import logging
+from basic import *
 logging.basicConfig(level = 'INFO')
 logger = logging.getLogger(name = __name__)
-import numpy as np
-from basic import *
 
 from sklearn.metrics import precision_score, recall_score, f1_score
 
@@ -55,7 +50,7 @@ sampler = Sampler()
 np.random.seed(seed = 1)    #standardized
 
 #gradient descent
-descent = plot.history(trainer, save = True)
+descent = plot.history(trainer)
 
 #before-after
 comparisons_digits = plot.before_after(
@@ -77,6 +72,7 @@ anomalous_reconstructions = plot.before_after(
     anomalous,
     np.random.choice(np.arange(len(anomalous)), size = 30, replace = False),
     model,
+    save = True,
     )
 os.makedirs('figures/before-after-anomalous', exist_ok = True)
 for l in range(len(anomalous_reconstructions)):
