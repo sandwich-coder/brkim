@@ -1,6 +1,3 @@
-import sys
-sys.path.append('..')
-
 from copy import deepcopy as copy
 import types
 import time
