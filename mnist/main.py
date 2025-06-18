@@ -119,7 +119,6 @@ print('            F1 (train): {f1}'.format(
     ))
 
 
-"""
 # - anomaly detection (test) -
 
 contaminated = np.concatenate([
@@ -152,4 +151,3 @@ print('         recall (test): {recall}'.format(
 print('             F1 (test): {f1}'.format(
     f1 = f1_score(truth, prediction),
     ))
-"""
