@@ -48,10 +48,10 @@ class DimensionEstimator:
         if divisions > 10000:
             raise ValueError('\'divisions\' greater than 10000 is not supported.')
         if trim:
-            logging.info('The dataset is trimmed by the isolation forest.')
+            logger.info('The dataset is trimmed by the isolation forest.')
         if truncate:
             retained_variance = 0.9
-            logging.warning('The dataset is truncated at 90% total variance for faster computation. It may overtruncate when there are few features.')
+            logger.warning('The dataset is truncated at 90% total variance for faster computation. It may overtruncate when there are few features.')
         else:
             retained_variance = None
         
