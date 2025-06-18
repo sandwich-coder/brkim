@@ -17,7 +17,7 @@ class Loader:
         if not isinstance(name, str):
             raise TypeError('The name should be a string.')
         if not isinstance(train, bool):
-            raise TypeError('The \'train\' should be boolean.')
+            raise TypeError('\'train\' should be boolean.')
 
         if name == 'cloths':
             array = FashionMNIST(
