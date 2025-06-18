@@ -98,7 +98,7 @@ truth = truth.astype('bool')
 error = np.sqrt(np.sum((contaminated_out - contaminated) ** 2, axis = 1), dtype = 'float64')
 if platform.machine() == 'arm64':
     subprocess.run(
-        'open figures/errors.png',
+        'open figures/errors.png'.split(),
         shell = True,
         )
     threshold = input('threshold: ')    # Threshold is determined manually by observing the error plot.
