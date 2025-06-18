@@ -49,7 +49,7 @@ class Autoencoder(nn.Module):
         if X.dtype != np.float64:
             X = X.astype('float64')
         if X.ndim != 2:
-            raise ValueError('The input must be of the standard shape.')
+            raise ValueError('The shape must be the dataset standard.')
         X = X.copy()
 
         if not train:
@@ -70,7 +70,7 @@ class Autoencoder(nn.Module):
         if T.dtype != torch.float32:
             T = T.to(torch.float32)
         if T.dim() != 2:
-            raise ValueError('The input must be of the standard shape.')
+            raise ValueError('The shape must be the dataset standard.')
         T = torch.clone(T)
 
         _ = T.numpy()
