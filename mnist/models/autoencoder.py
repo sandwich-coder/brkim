@@ -1,8 +1,8 @@
 from copy import deepcopy as copy
 import os, sys
 sys.path.append('..')
-import time
 import types
+import time
 import logging
 logger = logging.getLogger(name = __name__)
 import numpy as np

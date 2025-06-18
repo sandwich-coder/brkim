@@ -1,13 +1,13 @@
 from copy import deepcopy as copy
 import os, sys
-import time
 import types
+import time
 import logging
 logger = logging.getLogger(name = __name__)
 import numpy as np
 from basic import *
-from torch.utils.data import DataLoader
 
+from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 
@@ -22,7 +22,7 @@ else:
 learning_rate = 0.0001
 epsilon = 1e-7
 batch_size = 32
-epochs = 100
+epochs = 10
 
 
 class Trainer:
