@@ -12,9 +12,9 @@ class Sampler:
 
     def sample(self, X, size, axis = 0, replace = False):
         if not isinstance(X, np.ndarray):
-            raise TypeError('The input should be a \'numpy.ndarray\'.')
+            raise TypeError('The array should be a \'numpy.ndarray\'.')
         if X.ndim < 1:
-            raise ValueError('The input must be higher than 0-dimensional.')
+            raise ValueError('The array must be higher than 0-dimensional.')
         if not isinstance(size, int):
             raise TypeError('The size should be an integer.')
         if size < 1:

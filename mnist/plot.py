@@ -29,7 +29,7 @@ class Plot:
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
         if not isinstance(save, bool):
-            raise TypeError('The \'save\' should be boolean.')
+            raise TypeError('\'save\' should be boolean.')
         X = X.copy()
         index = index.copy()
 
@@ -154,14 +154,14 @@ class Plot:
             np.median(normal_error),
             marker = '',
             linestyle = '--',
-            color = 'grey',
+            color = 'black',
             label = 'median (normal)',
             )
         ax.axhline(
             np.median(anomalous_error),
             marker = '',
             linestyle = '--',
-            color = 'grey',
+            color = 'black',
             label = 'median (anomalous)',
             )
 
