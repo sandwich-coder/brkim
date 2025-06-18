@@ -1,5 +1,5 @@
 from copy import deepcopy as copy
-import os, sys, subprocess
+import sys, os, subprocess
 import types
 import time
 import logging
