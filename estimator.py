@@ -54,6 +54,7 @@ class DimensionEstimator:
             logger.warning('The dataset is truncated at 90% total variance for faster computation. It may overtruncate when there are few features.')
         else:
             retained_variance = None
+        X = X.copy()
         
         #trimmed
         if trim:
