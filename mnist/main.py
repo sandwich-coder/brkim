@@ -95,7 +95,8 @@ truth = truth.astype('bool')
 
 #Euclidean distance
 error = np.sqrt(np.sum((contaminated_out - contaminated) ** 2, axis = 1), dtype = 'float64')
-prediction = np.where(error >= 9, True, False)    # Threshold is determined manually by observing the error plot.
+threshold = input('threshold: ')    # Threshold is determined manually by observing the error plot.
+prediction = np.where(error >= 9, True, False)
 
 print('\n\n')
 print('     precision (train): {precision}'.format(
