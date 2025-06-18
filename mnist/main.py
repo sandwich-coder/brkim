@@ -3,8 +3,8 @@ import os, sys, subprocess
 import types
 import time
 import logging
-logger = logging.getLogger(name = __name__)
 logging.basicConfig(level = 'INFO')
+logger = logging.getLogger(name = __name__)
 import numpy as np
 from basic import *
 
