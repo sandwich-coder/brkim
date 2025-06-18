@@ -8,7 +8,6 @@ from basic import *
 logging.basicConfig(level = 'INFO')
 logger = logging.getLogger(name = __name__)
 
-import platform
 from sklearn.metrics import precision_score, recall_score, f1_score
 
 from loader import Loader
