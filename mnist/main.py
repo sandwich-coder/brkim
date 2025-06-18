@@ -1,4 +1,8 @@
 import sys, os, subprocess
+if sys.version_info[:2] != (3, 12):
+    raise RuntimeError('This module is intended to be executed on Python 3.12.')
+else:
+    logger.info('Python version checked')
 
 from copy import deepcopy as copy
 import types
@@ -16,11 +20,6 @@ from models.autoencoder import Autoencoder
 from trainer import Trainer
 from sampler import Sampler
 from plot import Plot
-
-if sys.version_info[:2] != (3, 12):
-    raise RuntimeError('This module is intended to be executed on Python 3.12.')
-else:
-    logger.info('Python version checked')
 
 
 #load
