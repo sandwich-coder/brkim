@@ -1,4 +1,4 @@
-import sys, os, subprocess    # These will be imported only on the main.
+import sys, os, subprocess    # These will be imported only at the main.
 
 from basic import *
 logger = logging.getLogger(name = __name__)
