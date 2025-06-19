@@ -54,7 +54,7 @@ class Trainer:
         if X.dtype != np.float64:
             X = X.astype('float64')
         if X.ndim != 2:
-            raise ValueError('The shape must be the dataset standard.')
+            raise ValueError('The array must be tabular.')
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
         X = X.copy()

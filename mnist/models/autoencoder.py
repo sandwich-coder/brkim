@@ -85,7 +85,7 @@ class Autoencoder(nn.Module):
         if X.dtype != np.float64:
             X = X.astype('float64')
         if X.ndim != 2:
-            raise ValueError('The input must be of the standard shape.')
+            raise ValueError('The shape must be the dataset standard.')
         X = X.copy()
 
         X = self.process(X, train = False)

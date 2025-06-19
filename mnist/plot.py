@@ -19,7 +19,7 @@ class Plot:
         if X.dtype != np.float64:
             X = X.astype('float64')
         if X.ndim != 2:
-            raise ValueError('The array must be of the standard shape.')
+            raise ValueError('The array must be tabular')
         if not isinstance(index, np.ndarray):
             raise TypeError('The indices should be a \'numpy.ndarray\'.')
         if index.dtype != np.int64:
@@ -77,11 +77,11 @@ class Plot:
 
     def history(self, trainer, save = False):
         if not isinstance(save, bool):
-            raise TypeError('The \'save\' should be boolean.')
-        fig = pp.figure(layout = 'constrained', figsize = (10, 7.1))
+            raise TypeError('\'save\' should be boolean.')
+        fig = pp.figure(layout = 'constrained', figsize = (10, 7.3))
         ax = fig.add_subplot()
         ax.set_box_aspect(0.7)
-        ax.set_title('Descent', fontsize = 'medium')
+        ax.set_title('Descent')
         pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
 
         plot = ax.plot(
@@ -104,17 +104,17 @@ class Plot:
 
     def errors(self, normal, anomalous, model, save = False):
         if not isinstance(normal, np.ndarray):
-            raise TypeError('The normal array should be a \'numpy.ndarray\'.')
+            raise TypeError('The normal should be a \'numpy.ndarray\'.')
         if normal.dtype != np.float64:
             normal = normal.astype('float64')
         if normal.ndim != 2:
-            raise ValueError('The shape must be the dataset standard.')
+            raise ValueError('The normal must be tabular.')
         if not isinstance(anomalous, np.ndarray):
-            raise TypeError('The anomalous array should be a \'numpy.ndarray\'.')
+            raise TypeError('The anomalous should be a \'numpy.ndarray\'.')
         if anomalous.dtype != np.float64:
             anomalous = anomalous.astype('float64')
         if anomalous.ndim != 2:
-            raise ValueError('The shape must be the dataset standard.')
+            raise ValueError('The anomalous must be tabular.')
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
         if not isinstance(save, bool):
@@ -131,7 +131,7 @@ class Plot:
         fig = pp.figure(layout = 'constrained')
         ax = fig.add_subplot()
         ax.set_box_aspect(1)
-        ax.set_title('Reconstruction Errors', fontsize = 'medium')
+        ax.set_title('Reconstruction Errors')
         pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
 
         plot_1 = ax.plot(
@@ -153,14 +153,14 @@ class Plot:
         ax.axhline(
             np.median(normal_error),
             marker = '',
-            linestyle = '--',
+            linestyle = 'dashed',
             color = 'black',
             label = 'median (normal)',
             )
         ax.axhline(
             np.median(anomalous_error),
             marker = '',
-            linestyle = '--',
+            linestyle = 'dotted',
             color = 'black',
             label = 'median (anomalous)',
             )

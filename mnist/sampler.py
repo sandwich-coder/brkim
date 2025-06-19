@@ -16,9 +16,9 @@ class Sampler:
         if X.ndim < 1:
             raise ValueError('The array must be higher than 0-dimensional.')
         if not isinstance(size, int):
-            raise TypeError('The size should be an integer.')
+            raise TypeError('The sample size should be an integer.')
         if size < 1:
-            raise ValueError('The size must be positive.')
+            raise ValueError('The sample size must be positive.')
         if not isinstance(axis, int):
             raise TypeError('\'axis\' should be an integer.')
         if not isinstance(replace, bool):
