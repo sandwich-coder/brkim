@@ -1,4 +1,4 @@
-# This is an all-in-one execution for quick experiments.
+# This is an all-in-one isolated execution for quick experiments.
 
 from copy import deepcopy as copy
 import types
@@ -29,7 +29,7 @@ from sklearn.ensemble import IsolationForest
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
 from tqdm import tqdm
-from torchvision.datasets import EMNIST, FashionMNIST
+from torchvision.datasets import EMNIST, FashionMNIST, MNIST
 from torchvision.transforms import ToTensor
 
 
