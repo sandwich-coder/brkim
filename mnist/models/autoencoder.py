@@ -86,6 +86,8 @@ class Autoencoder(nn.Module):
             raise ValueError('The input must be tabular.')
         X = X.copy()
 
+        self.eval()
+
         X = self.process(X, train = False)
         X = self.forward(X)
         X = X.detach()    ###
