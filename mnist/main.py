@@ -33,52 +33,52 @@ trainer.train(array_train, model)
 out_train = model.flow(array_train)
 out_test = model.flow(array_test)
 
-#encoded
-with torch.no_grad():
-    encoded_train = model.encoder(
-        model.process(array_train, train = False)
-        )
-    encoded_test = model.encoder(
-        model.process(array_test, train = False)
-        )
-
 
 # - plot -
 
+os.makedirs('figures', exist_ok = True)
 plot = Plot()
 sampler = Sampler()
 np.random.seed(seed = 1)    #standardized
 
-#gradient descent
-descent = plot.history(trainer)
-
-#before-after
-comparisons_digits = plot.before_after(
-    array_test,
-    np.random.choice(np.arange(array_test.shape[0]), size = 30, replace = False),
-    model,
-    save = True,
-    )
-
-#reconstruction errors
 normal = array_train.copy()
 normal = sampler.sample(normal, size = 30000)
 anomalous = loader.load('cloths')
 anomalous = sampler.sample(anomalous, size = 30000)
-errors = plot.errors(normal, anomalous, model, save = True)
+
+#gradient descent
+descent = plot.history(trainer)
+descent.savefig('figures/history.png', dpi = 300)
+
+#normal reconstructions
+os.makedirs('figures/before-after-normal', exist_ok = True)
+temp = np.random.choice(np.arange(len(normal)), size = 30, replace = False)
+normal_reconstructions = plot.before_after(
+    normal,
+    temp,
+    model,
+    )
+for l in range(len(normal_reconstructions)):
+    normal_reconstructions[l].savefig('figures/before-after-normal/{index}.png'.format(
+        index = temp[l],
+        ), dpi = 300)
 
 #anomaly reconstructions
+os.makedirs('figures/before-after-anomalous', exist_ok = True)
+temp = np.random.choice(np.arange(len(anomalous)), size = 30, replace = False)
 anomalous_reconstructions = plot.before_after(
     anomalous,
-    np.random.choice(np.arange(len(anomalous)), size = 30, replace = False),
+    temp,
     model,
-    save = True,
     )
-os.makedirs('figures/before-after-anomalous', exist_ok = True)
 for l in range(len(anomalous_reconstructions)):
-    anomalous_reconstructions[l].savefig('figures/before-after-anomalous/{count}st.png'.format(
-        count = l+1,
-        ))
+    anomalous_reconstructions[l].savefig('figures/before-after-anomalous/{index}.png'.format(
+        index = temp[l],
+        ), dpi = 300)
+
+#reconstruction errors
+errors, error_metric = plot.errors(normal, anomalous, model, return_metric = True)
+errors.savefig('figures/errors.png', dpi = 300)
 
 
 # - anomaly detection (scan) -
@@ -87,19 +87,20 @@ contaminated = np.concatenate([
     sampler.sample(normal, size = 27000),
     sampler.sample(anomalous, size = 3000),
     ], axis = 0)
-contaminated_out = model.flow(contaminated)
 
 truth = np.zeros([30000], dtype = 'int64')
 truth[27000:] = 1
 truth = truth.astype('bool')
 
-#Euclidean distance
-error = np.sqrt(np.sum((contaminated_out - contaminated) ** 2, axis = 1), dtype = 'float64')
-
+# The threshold is determined manually by observing the error plot.
 errors.show()
-threshold = input('threshold: ')    # Threshold is determined manually by observing the error plot.
+threshold = input('threshold: ')
 threshold = float(threshold)
 
+error = error_metric(
+    contaminated,
+    model.flow(contaminated),
+    )
 prediction = np.where(error >= threshold, True, False)
 
 print('\n\n')
@@ -126,15 +127,17 @@ contaminated = np.concatenate([
         size = 3000,
         ),
     ], axis = 0)
-contaminated_out = model.flow(contaminated)
 
 truth = np.zeros([30000], dtype = 'int64')
 truth[27000:] = 1
 truth = truth.astype('bool')
 
 #Euclidean distance
-error = np.sqrt(np.sum((contaminated_out - contaminated) ** 2, axis = 1), dtype = 'float64')
-prediction = np.where(error >= 9, True, False)
+error = error_metric(
+    contaminated,
+    model.flow(contaminated),
+    )
+prediction = np.where(error >= threshold, True, False)
 
 print('\n\n')
 print('      precision (test): {precision}'.format(

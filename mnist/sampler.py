@@ -1,5 +1,3 @@
-import sys, os, subprocess    # These will be imported only in the main.
-
 from basic import *
 logger = logging.getLogger(name = __name__)
 
@@ -23,6 +21,8 @@ class Sampler:
             raise TypeError('\'axis\' should be an integer.')
         if not isinstance(replace, bool):
             raise TypeError('\'replace\' should be boolean.')
+        if X.shape[axis] < size:
+            raise ValueError('The sample size is smaller than the sampled.')
         X = X.copy()
 
         index = np.random.choice(

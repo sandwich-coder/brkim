@@ -1,5 +1,3 @@
-import sys, os, subprocess    # These will be imported only in the main.
-
 from basic import *
 logger = logging.getLogger(name = __name__)
 
@@ -13,7 +11,7 @@ class Plot:
     def __repr__(self):
         return 'plot'
 
-    def before_after(self, X, index, model, save = False):
+    def before_after(self, X, index, model):
         if not isinstance(X, np.ndarray):
             raise TypeError('The array should be a \'numpy.ndarray\'.')
         if X.dtype != np.float64:
@@ -28,8 +26,6 @@ class Plot:
             raise ValueError('The indices must be 1-dimensional.')
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
-        if not isinstance(save, bool):
-            raise TypeError('\'save\' should be boolean.')
         X = X.copy()
         index = index.copy()
 
@@ -65,19 +61,10 @@ class Plot:
 
             figs.append(fig)
 
-        if save:
-            os.makedirs('figures/before-after', exist_ok = True)
-            for llll in range(len(index)):
-                figs[llll].savefig('figures/before-after/{index}.png'.format(
-                    index = index[llll],
-                    ), dpi = 300)
-
         return figs
 
 
-    def history(self, trainer, save = False):
-        if not isinstance(save, bool):
-            raise TypeError('\'save\' should be boolean.')
+    def history(self, trainer):
         fig = pp.figure(layout = 'constrained', figsize = (10, 7.3))
         ax = fig.add_subplot()
         ax.set_box_aspect(0.7)
@@ -95,14 +82,10 @@ class Plot:
             )
         ax.legend()
 
-        if save:
-            os.makedirs('figures', exist_ok = True)
-            fig.savefig('figures/history.png', dpi = 300)
-
         return fig
 
 
-    def errors(self, normal, anomalous, model, save = False):
+    def errors(self, normal, anomalous, model, return_metric = False):
         if not isinstance(normal, np.ndarray):
             raise TypeError('The normal should be a \'numpy.ndarray\'.')
         if normal.dtype != np.float64:
@@ -117,16 +100,25 @@ class Plot:
             raise ValueError('The anomalous must be tabular.')
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
-        if not isinstance(save, bool):
-            raise TypeError('\'save\' should be boolean.')
+        if not isinstance(return_metric, bool):
+            raise TypeError('\'return_metric\' should be boolean.')
         normal = normal.copy()
         anomalous = anomalous.copy()
 
-        normal_out = model.flow(normal)
-        anomalous_out = model.flow(anomalous)
+        def diff(in_, out_):
+            error = (out_ - in_) ** 2
+            error = error.sum(axis = 1, dtype = 'float64')
+            error = np.sqrt(error, dtype = 'float64')
+            return error
 
-        normal_error = np.sqrt(np.sum((normal_out - normal) ** 2, axis = 1), dtype = 'float64')
-        anomalous_error = np.sqrt(np.sum((anomalous_out - anomalous) ** 2, axis = 1), dtype = 'float64')
+        normal_error = diff(
+            normal,
+            model.flow(normal),
+            )
+        anomalous_error = diff(
+            anomalous,
+            model.flow(anomalous),
+            )
 
         fig = pp.figure(layout = 'constrained')
         ax = fig.add_subplot()
@@ -167,8 +159,7 @@ class Plot:
 
         ax.legend()
 
-        if save:
-            os.makedirs('figures', exist_ok = True)
-            fig.savefig('figures/errors.png', dpi = 300)
-
-        return fig
+        if return_metric:
+            return fig, diff
+        else:
+            return fig
