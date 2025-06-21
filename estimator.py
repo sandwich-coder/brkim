@@ -1,5 +1,4 @@
 from copy import deepcopy as copy
-from dataclasses import dataclass
 import types
 import time
 import logging
