@@ -1,6 +1,6 @@
 import sys, os, subprocess
 if sys.version_info[:2] != (3, 12):
-    raise RuntimeError('This module is intended to be executed on Python 3.12.')
+    raise RuntimeError('This module is intended to be run on Python 3.12.')
 else:
     print('Python version checked')
 
