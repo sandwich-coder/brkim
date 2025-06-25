@@ -18,8 +18,7 @@ from trainer import Trainer
 from sampler import Sampler
 from plot import Plot
 
-
-#nvidia driver check
+#gpu driver check
 sh = 'nvidia-smi'
 sh_ = subprocess.run('which ' + sh, shell = True, capture_output = True, text = True)
 if sh_.stdout == '':
@@ -37,6 +36,7 @@ else:
         logger.info('The supported CUDA is lower than installed. Upgrade the driver.')
     else:
         logger.info('Nvidia driver checked')
+
 
 #load
 loader = Loader()
