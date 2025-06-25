@@ -16,6 +16,10 @@ class Loader:
             raise TypeError('The name should be a string.')
         if not isinstance(train, bool):
             raise TypeError('\'train\' should be boolean.')
+        if train:
+            kind = 'train'
+        else:
+            kind = 'test'
 
         if name == 'cloths':
             array = FashionMNIST(
@@ -28,7 +32,10 @@ class Loader:
             array = array.reshape([array.shape[0], -1])
             array = (array - array.min()) / (array.max() - array.min())
             array = (array - np.float64(0.5)) * np.float64(2)
-            logger.info('\'{name}\' has been loaded.'.format(name = name))
+            logger.info('\'{name}\' ({kind}) is loaded.'.format(
+                name = name,
+                kind = kind,
+                ))
             return array
 
         array = EMNIST(
@@ -47,6 +54,9 @@ class Loader:
         array = (array - array.min()) / (array.max() - array.min())
         array = (array - np.float64(0.5)) * np.float64(2)
 
-        logger.info('\'{name}\' has been loaded.'.format(name = name))
+        logger.info('\'{name}\' ({kind}) is loaded.'.format(
+            name = name,
+            kind = kind,
+            ))
 
         return array

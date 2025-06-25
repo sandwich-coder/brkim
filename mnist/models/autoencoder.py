@@ -9,18 +9,24 @@ class Autoencoder(nn.Module):
         super().__init__()
 
         self.encoder = nn.Sequential(
-            nn.Sequential(nn.Linear(784, 1000), nn.GELU()),
-            nn.Sequential(nn.Linear(1000, 333), nn.GELU()),
-            nn.Sequential(nn.Linear(333, 111), nn.GELU()),
-            nn.Sequential(nn.Linear(111, 37), nn.GELU()),
-            nn.Sequential(nn.Linear(37, 5), nn.Tanh()),
+
+            # Doesn't work as expected. Lack of experience.
+            nn.Sequential(nn.Conv2d(kernel_size = (9, 9), in_channels = 1, out_channels = 1), nn.GELU()),    #20*20
+            nn.Sequential(nn.Conv2d(kernel_size = (6, 6), in_channels = 1, out_channels = 1), nn.GELU()),    #15*15
+            nn.Sequential(nn.Conv2d(kernel_size = (5, 5), in_channels = 1, out_channels = 1), nn.GELU()),    #11*11
+            nn.Sequential(nn.Conv2d(kernel_size = (3, 3), in_channels = 1, out_channels = 1), nn.GELU()),    #9*9
+
+            nn.Flatten(),
+            nn.Sequential(nn.Linear(81, 27), nn.GELU()),
+            nn.Sequential(nn.Linear(27, 5), nn.Tanh()),
+            
             )
 
         self.decoder = nn.Sequential(
-            nn.Sequential(nn.Linear(5, 15), nn.GELU()),
-            nn.Sequential(nn.Linear(15, 45), nn.GELU()),
-            nn.Sequential(nn.Linear(45, 135), nn.GELU()),
-            nn.Sequential(nn.Linear(135, 1000), nn.GELU()),
+            nn.Sequential(nn.Linear(5, 37), nn.GELU()),
+            nn.Sequential(nn.Linear(37, 111), nn.GELU()),
+            nn.Sequential(nn.Linear(111, 333), nn.GELU()),
+            nn.Sequential(nn.Linear(333, 1000), nn.GELU()),
             nn.Sequential(nn.Linear(1000, 784), nn.Tanh()),
             )
 
@@ -35,7 +41,9 @@ class Autoencoder(nn.Module):
     def forward(self, t):
         t = torch.clone(t)
 
-        t = self.encoder(t)
+        t = self.encoder(
+            t.reshape([-1, 1, 28, 28]),
+            )
         t = self.decoder(t)
 
         return t
@@ -48,6 +56,8 @@ class Autoencoder(nn.Module):
             X = X.astype('float64')
         if X.ndim != 2:
             raise ValueError('The input must be tabular.')
+        if X.shape[1] != 784:
+            raise ValueError('The input must be 784-dimensional')
         X = X.copy()
 
         if not train:
@@ -69,6 +79,8 @@ class Autoencoder(nn.Module):
             T = T.to(torch.float32)
         if T.dim() != 2:
             raise ValueError('The input must be tabular.')
+        if T.size()[-1] != 784:
+            raise ValueError('The input must be 784-dimensional.')
         T = torch.clone(T)
 
         _ = T.numpy()
@@ -84,6 +96,8 @@ class Autoencoder(nn.Module):
             X = X.astype('float64')
         if X.ndim != 2:
             raise ValueError('The input must be tabular.')
+        if X.shape[1] != 784:
+            raise ValueError('The input must be 784-dimensional.')
         X = X.copy()
 
         self.eval()
