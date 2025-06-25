@@ -29,7 +29,7 @@ class Trainer:
         'epochs',
         ]
     """
-    def __init__(self, Optimizer = optim.Adam, LossFn = nn.MSELoss):
+    def __init__(self, Optimizer = optim.AdamW, LossFn = nn.MSELoss):
         if not issubclass(Optimizer, optim.Optimizer):
             raise TypeError('The optimizer should be a subclass of \'torch.nn.optim.Optimizer\'.')
         if not issubclass(LossFn, nn.Module):

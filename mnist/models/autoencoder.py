@@ -9,19 +9,19 @@ class Autoencoder(nn.Module):
         super().__init__()
 
         self.encoder = nn.Sequential(
-            nn.Sequential(nn.Linear(784, 729), nn.GELU()),
-            nn.Sequential(nn.Linear(729, 243), nn.GELU()),
-            nn.Sequential(nn.Linear(243, 81), nn.GELU()),
-            nn.Sequential(nn.Linear(81, 27), nn.GELU()),
-            nn.Sequential(nn.Linear(27, 20), nn.Tanh()),
+            nn.Sequential(nn.Linear(784, 1000), nn.GELU()),
+            nn.Sequential(nn.Linear(1000, 333), nn.GELU()),
+            nn.Sequential(nn.Linear(333, 111), nn.GELU()),
+            nn.Sequential(nn.Linear(111, 37), nn.GELU()),
+            nn.Sequential(nn.Linear(37, 5), nn.Tanh()),
             )
 
         self.decoder = nn.Sequential(
-            nn.Sequential(nn.Linear(20, 27), nn.GELU()),
-            nn.Sequential(nn.Linear(27, 81), nn.GELU()),
-            nn.Sequential(nn.Linear(81, 243), nn.GELU()),
-            nn.Sequential(nn.Linear(243, 729), nn.GELU()),
-            nn.Sequential(nn.Linear(729, 784), nn.Tanh()),
+            nn.Sequential(nn.Linear(5, 15), nn.GELU()),
+            nn.Sequential(nn.Linear(15, 45), nn.GELU()),
+            nn.Sequential(nn.Linear(45, 135), nn.GELU()),
+            nn.Sequential(nn.Linear(135, 1000), nn.GELU()),
+            nn.Sequential(nn.Linear(1000, 784), nn.Tanh()),
             )
 
         #initialized
