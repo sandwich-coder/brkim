@@ -1,8 +1,27 @@
 import sys, os, subprocess
+
+#python check
 if sys.version_info[:2] != (3, 12):
     raise RuntimeError('This module is intended to be run on Python 3.12.')
 else:
     print('Python version checked')
+
+#nvidia driver check
+sh = 'nvidia-smi'
+sh_ = subprocess.run('which ' + sh, shell = True, capture_output = True, text = True)
+if sh_.stdout == '':
+    print('Command \'{command}\' does not exist.'.format(command = sh))
+else:
+    sh_ = subprocess.run(
+        sh,
+        shell = True, capture_output = True, text = True,
+        )
+    cuda_version = sh_.stdout.split()
+    cuda_version = cuda_version[cuda_version.index('CUDA') + 2]
+    if float(cuda_version) < 12.8:
+        print('The supported CUDA is lower than 12.8. Upgrade the driver.')
+    else:
+        print('Nvidia driver checked')
 
 from basic import *
 logging.basicConfig(level = 'INFO')

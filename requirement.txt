@@ -1,5 +1,7 @@
 #python3.12
 
+--extra-index-url https://download.pytorch.org/whl/cu128
+
 numpy
 scipy
 matplotlib
