@@ -6,23 +6,6 @@ if sys.version_info[:2] != (3, 12):
 else:
     print('Python version checked')
 
-#nvidia driver check
-sh = 'nvidia-smi'
-sh_ = subprocess.run('which ' + sh, shell = True, capture_output = True, text = True)
-if sh_.stdout == '':
-    print('Command \'{command}\' does not exist.'.format(command = sh))
-else:
-    sh_ = subprocess.run(
-        sh,
-        shell = True, capture_output = True, text = True,
-        )
-    cuda_version = sh_.stdout.split()
-    cuda_version = cuda_version[cuda_version.index('CUDA') + 2]
-    if float(cuda_version) < 12.8:
-        print('The supported CUDA is lower than 12.8. Upgrade the driver.')
-    else:
-        print('Nvidia driver checked')
-
 from basic import *
 logging.basicConfig(level = 'INFO')
 logger = logging.getLogger(name = __name__)
@@ -35,6 +18,25 @@ from trainer import Trainer
 from sampler import Sampler
 from plot import Plot
 
+
+#nvidia driver check
+sh = 'nvidia-smi'
+sh_ = subprocess.run('which ' + sh, shell = True, capture_output = True, text = True)
+if sh_.stdout == '':
+    logger.info('Command \'{command}\' does not exist.'.format(command = sh))
+else:
+    sh_ = subprocess.run(
+        sh,
+        shell = True, capture_output = True, text = True,
+        )
+    cuda_version = sh_.stdout.split()
+    cuda_version = cuda_version[cuda_version.index('CUDA') + 2]
+    if torch.version.cuda is None:
+        logger.info('The installed pytorch is not built with CUDA. Install a CUDA-enabled.')
+    elif float(cuda_version) < float(torch.version.cuda):
+        logger.info('The supported CUDA is lower than installed. Upgrade the driver.')
+    else:
+        logger.info('Nvidia driver checked')
 
 #load
 loader = Loader()
