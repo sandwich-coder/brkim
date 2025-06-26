@@ -165,7 +165,7 @@ class Plot:
             return fig
 
 
-    #not tested
+    #has not been tested
     def dashes(X, model, sample = True, size = 300):
         if not isinstance(X, np.ndarray):
             raise TypeError('The array should be a \'numpy.ndarray\'.')
@@ -191,29 +191,33 @@ class Plot:
                 ), size = size, replace = False)
             sample = X[sample]
 
+        compressed = model.process(sample)
+        compressed = model.encoder(compressed)
+        compressed = model.unprocess(compressed)
+
         fig = pp.figure(layout = 'constrained', figsize = (10, 5.4))
         ax = fig.add_subplot()
         ax.set_box_aspect(0.5)
         ax.set_title('Dashes   (#samples: {count})'.format(
-            count = len(sample),
+            count = len(compressed),
             ))
         ax.set_xlabel('feature #')
         ax.set_ylabel('value')
         pp.setp(ax.get_yticklabels(), ha = 'right', va = 'center', rotation = 90)
         plots = []
-        index = range(len(sample))
+        index = range(len(compressed))
         for ll in index:
-            instance = sample[ll]
+            instance = compressed[ll]
 
             plot = ax.plot(
                 range(1, 1+len(instance)), instance,
-                marker = 'o', markersize = 600 / (sample.shape[0] * sample.shape[1]),
-                linestyle = '--', linewidth = 300 / (sample.shape[0] * sample.shape[1]),
+                marker = 'o', markersize = 600 / (compressed.shape[0] * compressed.shape[1]),
+                linestyle = '--', linewidth = 300 / (compressed.shape[0] * compressed.shape[1]),
                 color = 'tab:orange',
                 alpha = 0.5,
                 )
             plots.append(plot)
 
-        ax.set_xticks(np.arange(1, 1+sample.shape[1], dtype = 'int64'))
+        ax.set_xticks(np.arange(1, 1+compressed.shape[1], dtype = 'int64'))
 
         return fig
