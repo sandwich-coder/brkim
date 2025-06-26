@@ -178,7 +178,7 @@ class Plot:
         if not isinstance(sample, bool):
             raise TypeError('\'sample\' should be boolean.')
         if not isinstance(size, int):
-            raise TypeError(\'size\' should be an integer.')
+            raise TypeError('\'size\' should be an integer.')
         if size <= 0:
             raise ValueError('\'size\' must be positive.')
         X = X.copy()
