@@ -163,3 +163,57 @@ class Plot:
             return fig, diff
         else:
             return fig
+
+
+    #not tested
+    def dashes(X, model, sample = True, size = 300):
+        if not isinstance(X, np.ndarray):
+            raise TypeError('The array should be a \'numpy.ndarray\'.')
+        if X.dtype != np.float64:
+            X = X.astype('float64')
+        if X.ndim != 2:
+            raise ValueError('The array must be tabular.')
+        if not isinstance(model, nn.Module):
+            raise TypeError('The model should be a \'torch.nn.Module\'.')
+        if not isinstance(sample, bool):
+            raise TypeError('\'sample\' should be boolean.')
+        if not isinstance(size, int):
+            raise TypeError(\'size\' should be an integer.')
+        if size <= 0:
+            raise ValueError('\'size\' must be positive.')
+        X = X.copy()
+
+        if not sample:
+            sample = X.copy()
+        else:
+            sample = np.random.choice(np.arange(
+                len(X),
+                ), size = size, replace = False)
+            sample = X[sample]
+
+        fig = pp.figure(layout = 'constrained', figsize = (10, 5.4))
+        ax = fig.add_subplot()
+        ax.set_box_aspect(0.5)
+        ax.set_title('Dashes   (#samples: {count})'.format(
+            count = len(sample),
+            ))
+        ax.set_xlabel('feature #')
+        ax.set_ylabel('value')
+        pp.setp(ax.get_yticklabels(), ha = 'right', va = 'center', rotation = 90)
+        plots = []
+        index = range(len(sample))
+        for ll in index:
+            instance = sample[ll]
+
+            plot = ax.plot(
+                range(1, 1+len(instance)), instance,
+                marker = 'o', markersize = 600 / (sample.shape[0] * sample.shape[1]),
+                linestyle = '--', linewidth = 300 / (sample.shape[0] * sample.shape[1]),
+                color = 'tab:orange',
+                alpha = 0.5,
+                )
+            plots.append(plot)
+
+        ax.set_xticks(np.arange(1, 1+sample.shape[1], dtype = 'int64'))
+
+        return fig
