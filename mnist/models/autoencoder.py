@@ -8,6 +8,7 @@ class Autoencoder(nn.Module):
     def __init__(self):
         super().__init__()
 
+        """
         self.encoder = nn.Sequential(
 
             # Doesn't work as expected. Lack of experience.
@@ -20,6 +21,15 @@ class Autoencoder(nn.Module):
             nn.Sequential(nn.Linear(81, 27), nn.GELU()),
             nn.Sequential(nn.Linear(27, 5), nn.Tanh()),
             
+            )
+        """
+
+        self.encoder = nn.Sequential(
+            nn.Sequential(nn.Linear(784, 1000), nn.GELU()),
+            nn.Sequential(nn.Linear(1000, 333), nn.GELU()),
+            nn.Sequential(nn.Linear(333, 111), nn.GELU()),
+            nn.Sequential(nn.Linear(111, 37), nn.GELU()),
+            nn.Sequential(nn.Linear(37, 5), nn.GELU()),
             )
 
         self.decoder = nn.Sequential(
@@ -41,9 +51,11 @@ class Autoencoder(nn.Module):
     def forward(self, t):
         t = torch.clone(t)
 
-        t = self.encoder(
-            t.reshape([-1, 1, 28, 28]),
-            )
+        """
+        t = t.reshape([-1, 1, 28, 28])
+        """
+
+        t = self.encoder(t)
         t = self.decoder(t)
 
         return t
