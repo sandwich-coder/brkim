@@ -29,11 +29,11 @@ class Autoencoder(nn.Module):
             nn.Sequential(nn.Linear(1000, 333), nn.GELU()),
             nn.Sequential(nn.Linear(333, 111), nn.GELU()),
             nn.Sequential(nn.Linear(111, 37), nn.GELU()),
-            nn.Sequential(nn.Linear(37, 5), nn.GELU()),
+            nn.Sequential(nn.Linear(37, 10), nn.GELU()),
             )
 
         self.decoder = nn.Sequential(
-            nn.Sequential(nn.Linear(5, 37), nn.GELU()),
+            nn.Sequential(nn.Linear(10, 37), nn.GELU()),
             nn.Sequential(nn.Linear(37, 111), nn.GELU()),
             nn.Sequential(nn.Linear(111, 333), nn.GELU()),
             nn.Sequential(nn.Linear(333, 1000), nn.GELU()),
