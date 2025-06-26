@@ -49,6 +49,7 @@ class Autoencoder(nn.Module):
         return 'autoencoder'
 
     def forward(self, t):
+        ## Checking of the number of features should be placed in the 'forward' instead of the 'process' and 'unprocess'.
         t = torch.clone(t)
 
         """
