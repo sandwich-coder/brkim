@@ -49,7 +49,7 @@ class Autoencoder(nn.Module):
         return 'autoencoder'
 
     def forward(self, t):
-        if t.size()[1] != 784:
+        if t.size(dim = 1) != 784:
             raise ValueError('The number of features must be 784.')    # Checking of the number of features should be placed in the 'forward' instead of the 'process' and 'unprocess'.
         t = torch.clone(t)
 
