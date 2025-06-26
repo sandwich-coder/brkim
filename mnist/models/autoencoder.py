@@ -68,8 +68,6 @@ class Autoencoder(nn.Module):
             X = X.astype('float64')
         if X.ndim != 2:
             raise ValueError('The input must be tabular.')
-        if X.shape[1] != 784:
-            raise ValueError('The input must be 784-dimensional')
         X = X.copy()
 
         if not train:
@@ -91,8 +89,6 @@ class Autoencoder(nn.Module):
             T = T.to(torch.float32)
         if T.dim() != 2:
             raise ValueError('The input must be tabular.')
-        if T.size()[-1] != 784:
-            raise ValueError('The input must be 784-dimensional.')
         T = torch.clone(T)
 
         _ = T.numpy()
