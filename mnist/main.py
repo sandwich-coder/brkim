@@ -84,6 +84,10 @@ for l in range(len(normal_reconstructions)):
         index = temp[l],
         ), dpi = 300)
 
+#dashes
+dashes = plot.dashes(normal, model, size = 500)
+dashes.savefig('figures/dashes.png', dpi = 300)
+
 #anomaly reconstructions
 os.makedirs('figures/before-after-anomalous', exist_ok = True)
 temp = np.random.choice(np.arange(len(anomalous)), size = 30, replace = False)

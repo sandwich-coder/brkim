@@ -85,8 +85,7 @@ class Plot:
         return fig
 
 
-    #has not been tested
-    def dashes(X, model, sample = True, size = 300):
+    def dashes(self, X, model, sample = True, size = 300):
         if not isinstance(X, np.ndarray):
             raise TypeError('The array should be a \'numpy.ndarray\'.')
         if X.dtype != np.float64:
@@ -99,7 +98,7 @@ class Plot:
             raise TypeError('\'sample\' should be boolean.')
         if not isinstance(size, int):
             raise TypeError('\'size\' should be an integer.')
-        if size <= 0:
+        if size < 1:
             raise ValueError('\'size\' must be positive.')
         X = X.copy()
 
@@ -111,9 +110,10 @@ class Plot:
                 ), size = size, replace = False)
             sample = X[sample]
 
-        compressed = model.process(sample)
+        compressed = model.process(sample, train = False)
         compressed = model.encoder(compressed)
-        compressed = model.unprocess(compressed)
+        compressed = compressed.detach()    ###
+        compressed = compressed.numpy()
 
         fig = pp.figure(layout = 'constrained', figsize = (10, 5.4))
         ax = fig.add_subplot()

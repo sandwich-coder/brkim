@@ -29,7 +29,7 @@ class Autoencoder(nn.Module):
             nn.Sequential(nn.Linear(1000, 333), nn.GELU()),
             nn.Sequential(nn.Linear(333, 111), nn.GELU()),
             nn.Sequential(nn.Linear(111, 37), nn.GELU()),
-            nn.Sequential(nn.Linear(37, 10), nn.GELU()),
+            nn.Sequential(nn.Linear(37, 10), nn.Tanh()),
             )
 
         self.decoder = nn.Sequential(
@@ -84,9 +84,12 @@ class Autoencoder(nn.Module):
         return processed
 
 
+    # This method solely aims to be the inverse of the 'process'. It doesn't add any other functionality.
     def unprocess(self, T):
         if not isinstance(T, torch.Tensor):
             raise TypeError('The input should be a \'torch.Tensor\'.')
+        if T.requires_grad:
+            raise ValueError('The input must not be on the graph. \nThis method doesn\'nt automatically detach such Tensors.')
         if T.dtype != torch.float32:
             T = T.to(torch.float32)
         if T.dim() != 2:
