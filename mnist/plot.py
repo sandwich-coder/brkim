@@ -134,10 +134,10 @@ class Plot:
 
             plot = ax.plot(
                 range(1, 1+len(instance)), instance,
-                marker = 'o', markersize = 600 / (compressed.shape[0] * compressed.shape[1]),
-                linestyle = '--', linewidth = 300 / (compressed.shape[0] * compressed.shape[1]),
+                marker = 'o', markersize = 3 / len(compressed) ** 0.5,
+                linestyle = '--', linewidth = 3 / len(compressed),
+                alpha = 0.8,
                 color = 'tab:orange',
-                alpha = 0.5,
                 )
             plots.append(plot)
 
@@ -185,37 +185,24 @@ class Plot:
         ax = fig.add_subplot()
         ax.set_box_aspect(1)
         ax.set_title('Reconstruction Errors')
+        ax.set_xticks([])
         pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
 
         plot_1 = ax.plot(
-            range(1, len(normal_error)+1), normal_error,
-            marker = 'o', markersize = 8000 / len(normal_error),
-            alpha = 0.8,
+            np.linspace(0, 1, num = len(normal_error), dtype = 'float64'), normal_error,
+            marker = 'o', markersize = 80 / len(normal_error) ** 0.5,    # I have no idea why only as big as 80 works.
             linestyle = '',
+            alpha = 0.8,
             color = 'tab:blue',
             label = 'normal',
             )
         plot_2 = ax.plot(
-            range(1, len(anomalous_error)+1), anomalous_error,
-            marker = 'o', markersize = 8000 / len(anomalous_error),
-            alpha = 0.8,
+            np.linspace(0, 1, num = len(anomalous_error), dtype = 'float64'), anomalous_error,
+            marker = 'o', markersize = 80 / len(anomalous_error) ** 0.5,
             linestyle = '',
-            color = 'red',
+            alpha = 0.8,
+            color = 'tab:red',
             label = 'anomalous',
-            )
-        ax.axhline(
-            np.median(normal_error),
-            marker = '',
-            linestyle = 'dashed',
-            color = 'black',
-            label = 'median (normal)',
-            )
-        ax.axhline(
-            np.median(anomalous_error),
-            marker = '',
-            linestyle = 'dotted',
-            color = 'black',
-            label = 'median (anomalous)',
             )
 
         ax.legend()
