@@ -25,19 +25,19 @@ class Autoencoder(nn.Module):
         """
 
         self.encoder = nn.Sequential(
-            nn.Sequential(nn.Linear(784, 1000), nn.GELU()),
-            nn.Sequential(nn.Linear(1000, 333), nn.GELU()),
-            nn.Sequential(nn.Linear(333, 111), nn.GELU()),
-            nn.Sequential(nn.Linear(111, 37), nn.GELU()),
-            nn.Sequential(nn.Linear(37, 10), nn.Tanh()),
+            nn.Sequential(nn.Linear(784, 1000), nn.Dropout(0.03), nn.GELU()),
+            nn.Sequential(nn.Linear(1000, 333), nn.Dropout(0.03), nn.GELU()),
+            nn.Sequential(nn.Linear(333, 111), nn.Dropout(0.03), nn.GELU()),
+            nn.Sequential(nn.Linear(111, 37), nn.Dropout(0.03), nn.GELU()),
+            nn.Sequential(nn.Linear(37, 20), nn.Dropout(0.03), nn.Tanh()),
             )
 
         self.decoder = nn.Sequential(
-            nn.Sequential(nn.Linear(10, 37), nn.GELU()),
-            nn.Sequential(nn.Linear(37, 111), nn.GELU()),
-            nn.Sequential(nn.Linear(111, 333), nn.GELU()),
-            nn.Sequential(nn.Linear(333, 1000), nn.GELU()),
-            nn.Sequential(nn.Linear(1000, 784), nn.Tanh()),
+            nn.Sequential(nn.Linear(20, 37), nn.Dropout(0.03), nn.GELU()),
+            nn.Sequential(nn.Linear(37, 111), nn.Dropout(0.03), nn.GELU()),
+            nn.Sequential(nn.Linear(111, 333), nn.Dropout(0.03), nn.GELU()),
+            nn.Sequential(nn.Linear(333, 1000), nn.Dropout(0.03), nn.GELU()),
+            nn.Sequential(nn.Linear(1000, 784), nn.Dropout(0.03), nn.Tanh()),
             )
 
         #initialized

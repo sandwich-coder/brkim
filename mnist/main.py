@@ -76,8 +76,8 @@ os.makedirs('figures/before-after-normal', exist_ok = True)
 temp = np.random.choice(np.arange(len(normal)), size = 30, replace = False)
 normal_reconstructions = plot.before_after(
     normal,
-    temp,
     model,
+    index = temp,
     )
 for l in range(len(normal_reconstructions)):
     normal_reconstructions[l].savefig('figures/before-after-normal/{index}.png'.format(
@@ -93,8 +93,8 @@ os.makedirs('figures/before-after-anomalous', exist_ok = True)
 temp = np.random.choice(np.arange(len(anomalous)), size = 30, replace = False)
 anomalous_reconstructions = plot.before_after(
     anomalous,
-    temp,
     model,
+    index = temp,
     )
 for l in range(len(anomalous_reconstructions)):
     anomalous_reconstructions[l].savefig('figures/before-after-anomalous/{index}.png'.format(

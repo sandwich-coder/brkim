@@ -11,23 +11,26 @@ class Plot:
     def __repr__(self):
         return 'plot'
 
-    def before_after(self, X, index, model):
+    def before_after(self, X, model, index = None):
         if not isinstance(X, np.ndarray):
             raise TypeError('The array should be a \'numpy.ndarray\'.')
         if X.dtype != np.float64:
             X = X.astype('float64')
         if X.ndim != 2:
             raise ValueError('The array must be tabular')
-        if not isinstance(index, np.ndarray):
-            raise TypeError('The indices should be a \'numpy.ndarray\'.')
-        if index.dtype != np.int64:
-            raise ValueError('The indices must be of \'numpy.int64\'.')
-        if index.ndim != 1:
-            raise ValueError('The indices must be 1-dimensional.')
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
+        if index is not None:
+            if not isinstance(index, np.ndarray):
+                raise TypeError('The indices should be a \'numpy.ndarray\'.')
+            if index.dtype != np.int64:
+                raise ValueError('The indices must be of \'numpy.int64\'.')
+            if index.ndim != 1:
+                raise ValueError('The indices must be 1-dimensional.')
+            index = index.copy()
+        else:
+            index = np.random.choice(len(X), size = 30, replace = False)
         X = X.copy()
-        index = index.copy()
 
         before = X.copy()
         after = model.flow(X)
