@@ -63,59 +63,59 @@ class Autoencoder(nn.Module):
         return t
 
 
-    def process(self, A, train = True):
-        if not isinstance(A, np.ndarray):
+    def process(self, X, train = True):
+        if not isinstance(X, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if A.dtype != np.float64:
-            A = A.astype('float64')
-        if A.ndim != 2:
+        if X.dtype != np.float64:
+            X = X.astype('float64')
+        if X.ndim != 2:
             raise ValueError('The input must be tabular.')
-        A = A.copy()
+        X = X.copy()
 
         if not train:
             pass
         else:
             scaler = MinMaxScaler(feature_range = (-1, 1))
-            scaler.fit(A)
+            scaler.fit(X)
             self.fit_scaler = scaler
 
-        processed = self.fit_scaler.transform(A)
+        processed = self.fit_scaler.transform(X)
         processed = torch.tensor(processed, dtype = torch.float32)
         return processed
 
 
     # This method solely aims to be the inverse of the 'process'. It doesn't add any other functionality.
-    def unprocess(self, T):
-        if not isinstance(T, torch.Tensor):
+    def unprocess(self, processed):
+        if not isinstance(processed, torch.Tensor):
             raise TypeError('The input should be a \'torch.Tensor\'.')
-        if T.requires_grad:
+        if processed.requires_grad:
             raise ValueError('The input must not be on the graph. \nThis method doesn\'nt automatically detach such Tensors.')
-        if T.dtype != torch.float32:
-            T = T.to(torch.float32)
-        if T.dim() != 2:
+        if processed.dtype != torch.float32:
+            processed = processed.to(torch.float32)
+        if processed.dim() != 2:
             raise ValueError('The input must be tabular.')
-        T = torch.clone(T)
+        processed = torch.clone(processed)
 
-        _ = T.numpy()
+        _ = processed.numpy()
         unprocessed = _.astype('float64')
         unprocessed = self.fit_scaler.inverse_transform(unprocessed)
         return unprocessed
 
 
-    def flow(self, A):
-        if not isinstance(A, np.ndarray):
+    def flow(self, X):
+        if not isinstance(X, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if A.dtype != np.float64:
-            A = A.astype('float64')
-        if A.ndim != 2:
+        if X.dtype != np.float64:
+            X = X.astype('float64')
+        if X.ndim != 2:
             raise ValueError('The input must be tabular.')
-        A = A.copy()
+        X = X.copy()
 
         self.eval()
 
-        image = self.process(A, train = False)
-        image = self.forward(image)
-        image = image.detach()    ###
-        image = self.unprocess(image)
+        Y = self.process(X, train = False)
+        Y = self.forward(Y)
+        Y = Y.detach()    ###
+        Y = self.unprocess(Y)
 
-        return image
+        return Y
