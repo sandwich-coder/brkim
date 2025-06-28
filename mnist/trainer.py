@@ -16,7 +16,7 @@ else:
 learning_rate = 0.0001
 epsilon = 1e-7
 batch_size = 32
-epochs = 100
+epochs = 10
 
 
 class Trainer:
@@ -48,11 +48,11 @@ class Trainer:
     
     def train(self, X, model):
         if not isinstance(X, np.ndarray):
-            raise TypeError('The array should be a \'numpy.ndarray\'.')
+            raise TypeError('The input should be a \'numpy.ndarray\'.')
         if X.dtype != np.float64:
             X = X.astype('float64')
         if X.ndim != 2:
-            raise ValueError('The array must be tabular.')
+            raise ValueError('The input must be tabular.')
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
         X = X.copy()
