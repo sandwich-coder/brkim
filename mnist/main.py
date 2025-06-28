@@ -40,19 +40,19 @@ else:
 
 #load
 loader = Loader()
-array_train = loader.load('mnist')
-array_test = loader.load('mnist', train = False)
+X = loader.load('mnist')
+X_ = loader.load('mnist', train = False)
 
 #model
 model = Autoencoder()
 
 #train
 trainer = Trainer()
-trainer.train(array_train, model)
+trainer.train(X, model)
 
 #test
-out_train = model.flow(array_train)
-out_test = model.flow(array_test)
+Y = model.flow(X)
+Y_ = model.flow(X_)
 
 
 # - plot -
@@ -62,10 +62,10 @@ plot = Plot()
 sampler = Sampler()
 np.random.seed(seed = 1)    #standardized
 
-normal = array_train.copy()
+normal = X.copy()
 normal = sampler.sample(normal, size = 30000)
 anomalous = loader.load('cloths')
-anomalous = sampler.sample(anomalous, size = 30000)
+anomalous = sampler.sample(anomalous, size = 3000)
 
 #gradient descent
 descent = plot.history(trainer)
@@ -109,12 +109,12 @@ errors.savefig('figures/errors.png', dpi = 300)
 # - anomaly detection (scan) -
 
 contaminated = np.concatenate([
-    sampler.sample(normal, size = 27000),
-    sampler.sample(anomalous, size = 3000),
+    normal,
+    anomalous,
     ], axis = 0)
 
-truth = np.zeros([30000], dtype = 'int64')
-truth[27000:] = 1
+truth = np.zeros([len(contaminated)], dtype = 'int64')
+truth[len(normal):] = 1
 truth = truth.astype('bool')
 
 # The threshold is determined manually by observing the error plot.
@@ -142,27 +142,30 @@ print('            F1 (train): {f1}'.format(
 
 # - anomaly detection (test) -
 
-contaminated = np.concatenate([
-    sampler.sample(
-        loader.load('digits', train = False),
-        size = 27000,
-        ),
-    sampler.sample(
-        loader.load('cloths', train = False),
-        size = 3000,
-        ),
+normal_ = sampler.sample(
+    loader.load('digits', train = False),
+    size = 27000,
+    )
+anomalous_ = sampler.sample(
+    loader.load('cloths', train = False),
+    size = 3000,
+    )
+
+contaminated_ = np.concatenate([
+    normal_,
+    anomalous_
     ], axis = 0)
 
-truth = np.zeros([30000], dtype = 'int64')
-truth[27000:] = 1
-truth = truth.astype('bool')
+truth_ = np.zeros([len(contaminated_)], dtype = 'int64')
+truth_[len(normal_):] = 1
+truth_ = truth_.astype('bool')
 
 #Euclidean distance
-error = error_metric(
-    contaminated,
-    model.flow(contaminated),
+error_ = error_metric(
+    contaminated_,
+    model.flow(contaminated_),
     )
-prediction = np.where(error >= threshold, True, False)
+prediction_ = np.where(error_ >= threshold, True, False)
 
 print('\n\n')
 print('      precision (test): {precision}'.format(
