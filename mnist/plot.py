@@ -190,7 +190,7 @@ class Plot:
 
         plot_1 = ax.plot(
             np.linspace(0, 1, num = len(normal_error), dtype = 'float64'), normal_error,
-            marker = 'o', markersize = 80 / len(normal_error) ** 0.5,    # I have no idea why only as big as 80 works.
+            marker = 'o', markersize = 80 / len(normal_error) ** 0.5,    # I have no idea why only markersizes so big work.
             linestyle = '',
             alpha = 0.8,
             color = 'tab:blue',
