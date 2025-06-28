@@ -63,23 +63,23 @@ class Autoencoder(nn.Module):
         return t
 
 
-    def process(self, X, train = True):
-        if not isinstance(X, np.ndarray):
+    def process(self, A, train = True):
+        if not isinstance(A, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if X.dtype != np.float64:
-            X = X.astype('float64')
-        if X.ndim != 2:
+        if A.dtype != np.float64:
+            A = A.astype('float64')
+        if A.ndim != 2:
             raise ValueError('The input must be tabular.')
-        X = X.copy()
+        A = A.copy()
 
         if not train:
             pass
         else:
             scaler = MinMaxScaler(feature_range = (-1, 1))
-            scaler.fit(X)
+            scaler.fit(A)
             self.fit_scaler = scaler
 
-        processed = self.fit_scaler.transform(X)
+        processed = self.fit_scaler.transform(A)
         processed = torch.tensor(processed, dtype = torch.float32)
         return processed
 
@@ -102,20 +102,20 @@ class Autoencoder(nn.Module):
         return unprocessed
 
 
-    def flow(self, X):
-        if not isinstance(X, np.ndarray):
+    def flow(self, A):
+        if not isinstance(A, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if X.dtype != np.float64:
-            X = X.astype('float64')
-        if X.ndim != 2:
+        if A.dtype != np.float64:
+            A = A.astype('float64')
+        if A.ndim != 2:
             raise ValueError('The input must be tabular.')
-        X = X.copy()
+        A = A.copy()
 
         self.eval()
 
-        X = self.process(X, train = False)
-        X = self.forward(X)
-        X = X.detach()    ###
-        X = self.unprocess(X)
+        image = self.process(A, train = False)
+        image = self.forward(image)
+        image = image.detach()    ###
+        image = self.unprocess(image)
 
-        return X
+        return image
