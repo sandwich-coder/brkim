@@ -72,7 +72,10 @@ descent.savefig('figures/history.png', dpi = 300)
 
 #normal reconstructions
 os.makedirs('figures/before-after-normal', exist_ok = True)
-temp = np.random.choice(np.arange(len(normal)), size = 30, replace = False)
+temp = 30
+if temp > len(normal):
+    temp = len(normal)
+temp = np.random.choice(np.arange(len(normal)), size = temp, replace = False)
 normal_reconstructions = plot.before_after(
     normal,
     model,
@@ -89,7 +92,10 @@ dashes.savefig('figures/dashes.png', dpi = 300)
 
 #anomaly reconstructions
 os.makedirs('figures/before-after-anomalous', exist_ok = True)
-temp = np.random.choice(np.arange(len(anomalous)), size = 30, replace = False)
+temp = 30
+if temp > len(anomalous):
+    temp = len(anomalous)
+temp = np.random.choice(np.arange(len(anomalous)), size = temp, replace = False)
 anomalous_reconstructions = plot.before_after(
     anomalous,
     model,
