@@ -63,9 +63,8 @@ sampler = Sampler()
 np.random.seed(seed = 1)    #standardized
 
 normal = X.copy()
-normal = sampler.sample(normal, size = 30000)
 anomalous = loader.load('cloths')
-anomalous = sampler.sample(anomalous, size = 3000)
+anomalous = sampler.sample(anomalous, size = len(normal) // 11)
 
 #gradient descent
 descent = plot.history(trainer)
@@ -142,14 +141,9 @@ print('            F1 (train): {f1}'.format(
 
 # - anomaly detection (test) -
 
-normal_ = sampler.sample(
-    loader.load('digits', train = False),
-    size = 27000,
-    )
-anomalous_ = sampler.sample(
-    loader.load('cloths', train = False),
-    size = 3000,
-    )
+normal_ = X_.copy()
+anomalous_ = loader.load('cloths', train = False)
+anomalous_ = sampler.sample(anomalous_, size = len(normal_) // 11)
 
 contaminated_ = np.concatenate([
     normal_,
@@ -169,11 +163,11 @@ prediction_ = np.where(error_ >= threshold, True, False)
 
 print('\n\n')
 print('      precision (test): {precision}'.format(
-    precision = precision_score(truth, prediction),
+    precision = precision_score(truth_, prediction_),
     ))
 print('         recall (test): {recall}'.format(
-    recall = recall_score(truth, prediction),
+    recall = recall_score(truth_, prediction_),
     ))
 print('             F1 (test): {f1}'.format(
-    f1 = f1_score(truth, prediction),
+    f1 = f1_score(truth_, prediction_),
     ))

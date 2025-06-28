@@ -188,17 +188,23 @@ class Plot:
         ax.set_xticks([])
         pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
 
+        temp = 25 / len(normal_error) ** 0.5
+        if temp > 1:
+            temp = 1
         plot_1 = ax.plot(
             np.linspace(0, 1, num = len(normal_error), dtype = 'float64'), normal_error,
-            marker = 'o', markersize = 3 * (27 / len(normal_error) ** 0.5),    # I have no idea why only markersizes so big work.
+            marker = 'o', markersize = 3 * temp,
             linestyle = '',
             alpha = 0.8,
             color = 'tab:blue',
             label = 'normal',
             )
+        temp = 25 / len(anomalous_error) ** 0.5
+        if temp > 1:
+            temp = 1
         plot_2 = ax.plot(
             np.linspace(0, 1, num = len(anomalous_error), dtype = 'float64'), anomalous_error,
-            marker = 'o', markersize = 3 * (27 / len(anomalous_error) ** 0.5),
+            marker = 'o', markersize = 3 * temp,
             linestyle = '',
             alpha = 0.8,
             color = 'tab:red',
