@@ -190,7 +190,7 @@ class Plot:
 
         plot_1 = ax.plot(
             np.linspace(0, 1, num = len(normal_error), dtype = 'float64'), normal_error,
-            marker = 'o', markersize = 80 / len(normal_error) ** 0.5,    # I have no idea why only markersizes so big work.
+            marker = 'o', markersize = 3 * (27 / len(normal_error) ** 0.5),    # I have no idea why only markersizes so big work.
             linestyle = '',
             alpha = 0.8,
             color = 'tab:blue',
@@ -198,7 +198,7 @@ class Plot:
             )
         plot_2 = ax.plot(
             np.linspace(0, 1, num = len(anomalous_error), dtype = 'float64'), anomalous_error,
-            marker = 'o', markersize = 80 / len(anomalous_error) ** 0.5,
+            marker = 'o', markersize = 3 * (27 / len(anomalous_error) ** 0.5),
             linestyle = '',
             alpha = 0.8,
             color = 'tab:red',
