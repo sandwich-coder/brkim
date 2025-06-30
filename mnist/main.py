@@ -15,9 +15,8 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 from loader import Loader
 from models.autoencoder import Autoencoder
 from trainer import Trainer
-from plotter import Plotter
 from anomaly_detector import AnomalyDetector
-
+from plotter import Plotter
 from tools.sampler import Sampler
 
 #gpu driver check
