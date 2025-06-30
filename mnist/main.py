@@ -15,10 +15,10 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 from loader import Loader
 from models.autoencoder import Autoencoder
 from trainer import Trainer
+from plotter import Plotter
 from anomaly_detector import AnomalyDetector
 
 from tools.sampler import Sampler
-from tools.plotter import Plotter
 
 #gpu driver check
 sh = 'nvidia-smi'
@@ -49,17 +49,17 @@ X = loader.load('mnist')
 X_ = loader.load('mnist', train = False)
 
 #model
-model = Autoencoder()
+ae = Autoencoder()
 
 #train
 trainer = Trainer()
-trainer.train(X, model)
+trainer.train(X, ae)
 
 #test
-Y = model.flow(X)
-Y_ = model.flow(X_)
+Y = ae.flow(X)
+Y_ = ae.flow(X_)
 
-#separation
+#anomalies
 normal = X.copy()
 normal_ = X_.copy()
 anomalous = sampler.sample(
@@ -71,38 +71,18 @@ anomalous_ = sampler.sample(
     size = len(normal_) // 11,
     )
 
-
-# - plot -
-
-os.makedirs('figures', exist_ok = True)
 plotter = Plotter()
-np.random.seed(seed = 1)    #standardized
-
-#normal reconstructions
-os.makedirs('figures/before-after-normal', exist_ok = True)
-temp = 30
-if temp > len(normal):
-    temp = len(normal)
-temp = np.random.choice(np.arange(len(normal)), size = temp, replace = False)
-normal_reconstructions = plotter.before_after(
-    normal,
-    model,
-    index = temp,
-    )
-for l in range(len(normal_reconstructions)):
-    normal_reconstructions[l].savefig('figures/before-after-normal/{index}.png'.format(
-        index = temp[l],
-        ), dpi = 300)
-
-#dashes
-dashes = plotter.dashes(normal, model, size = 500)
-dashes.savefig('figures/dashes.png', dpi = 300)
 
 
 # - anomaly detection -
 
 detector = AnomalyDetector()
-detector.build(normal, anomalous, model, manual = True)
+errors = detector.build(normal, anomalous, ae, manual = True, return_errorplot = True)
+errors_ = plotter.errors(normal_, anomalous_, ae)
+
+os.makedirs('figures', exist_ok = True)
+errors.savefig('figures/errors-train.png', dpi = 300)
+errors_.savefig('figures/errors-test.png', dpi = 300)
 
 #train
 contaminated = np.concatenate([

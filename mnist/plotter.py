@@ -130,3 +130,72 @@ class Plotter:
         ax.set_xticks(np.arange(1, 1+compressed.shape[1], dtype = 'int64'))
 
         return fig
+
+
+    def errors(self, normal, anomalous, ae):
+        if not isinstance(normal, np.ndarray):
+            raise TypeError('The normal should be a \'numpy.ndarray\'.')
+        if not isinstance(anomalous, np.ndarray):
+            raise TypeError('The anomalous should be a \'numpy.ndarray\'.')
+        if not isinstance(ae, nn.Module):
+            raise TypeError('The autoencoder should be a \'torch.nn.Module\'.')
+        if not (normal.ndim == anomalous.ndim == 2):
+            raise ValueError('The arrays must be tabular.')
+        if not (normal.shape[1] == anomalous.shape[1]):
+            raise ValueError('The normal and anomalous must have the same number of features.')
+        if not normal.dtype == np.float64:
+            logger.warning('The dtype doesn\'t match.')
+            normal = normal.astype('float64')
+        if not anomalous.dtype == np.float64:
+            logger.warning('The dtype doesn\'t match.')
+            anomalous = anomalous.astype('float64')
+        normal = normal.copy()
+        anomalous = anomalous.copy()
+        fig = pp.figure(layout = 'constrained')
+        ax = fig.add_subplot()
+        ax.set_box_aspect(1)
+        ax.set_title('Reconstruction Errors')
+        ax.set_xticks([])
+        pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
+
+        #Euclidean distance
+        def diff(X, Y):
+            error = (Y - X) ** 2
+            error = error.sum(axis = 1, dtype = 'float64')
+            error = np.sqrt(error, dtype = 'float64')
+            return error
+
+        normal_error = diff(
+            normal,
+            ae.flow(normal),
+            )
+        anomalous_error = diff(
+            anomalous,
+            ae.flow(anomalous),
+            )
+
+        temp = 25 / len(normal_error) ** 0.5
+        if temp > 1:
+            temp = 1
+        plot_1 = ax.plot(
+            np.linspace(0, 1, num = len(normal_error), dtype = 'float64'), normal_error,
+            marker = 'o', markersize = 3 * temp,
+            linestyle = '',
+            alpha = 0.8,
+            color = 'tab:blue',
+            label = 'normal',
+            )
+        temp = 25 / len(anomalous_error) ** 0.5
+        if temp > 1:
+            temp = 1
+        plot_2 = ax.plot(
+            np.linspace(0, 1, num = len(anomalous_error), dtype = 'float64'), anomalous_error,
+            marker = 'o', markersize = 3 * temp,
+            linestyle = '',
+            alpha = 0.8,
+            color = 'tab:red',
+            label = 'anomalous',
+            )
+
+        ax.legend()
+        return fig
