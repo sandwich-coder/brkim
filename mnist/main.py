@@ -39,6 +39,9 @@ else:
         logger.info('Nvidia driver checked')
 
 
+#tools
+sampler = Sampler()
+
 #load
 loader = Loader()
 X = loader.load('mnist')
@@ -60,7 +63,6 @@ Y_ = model.flow(X_)
 
 os.makedirs('figures', exist_ok = True)
 plot = Plot()
-sampler = Sampler()
 np.random.seed(seed = 1)    #standardized
 
 normal = X.copy()

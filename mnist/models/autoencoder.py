@@ -29,11 +29,11 @@ class Autoencoder(nn.Module):
             nn.Sequential(nn.Linear(1000, 333), nn.GELU()),
             nn.Sequential(nn.Linear(333, 111), nn.GELU()),
             nn.Sequential(nn.Linear(111, 37), nn.GELU()),
-            nn.Sequential(nn.Linear(37, 20), nn.Tanh()),
+            nn.Sequential(nn.Linear(37, 10), nn.Tanh()),
             )
 
         self.decoder = nn.Sequential(
-            nn.Sequential(nn.Linear(20, 37), nn.GELU()),
+            nn.Sequential(nn.Linear(10, 37), nn.GELU()),
             nn.Sequential(nn.Linear(37, 111), nn.GELU()),
             nn.Sequential(nn.Linear(111, 333), nn.GELU()),
             nn.Sequential(nn.Linear(333, 1000), nn.GELU()),
@@ -84,7 +84,7 @@ class Autoencoder(nn.Module):
         return processed
 
 
-    # This method solely aims to be the inverse of the 'process'. It doesn't add any other functionality.
+    # This method solely aims to be the inverse. It doesn't add any other functionality.
     def unprocess(self, processed):
         if not isinstance(processed, torch.Tensor):
             raise TypeError('The input should be a \'torch.Tensor\'.')
