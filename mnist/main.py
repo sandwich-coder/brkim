@@ -17,7 +17,7 @@ from models.autoencoder import Autoencoder
 from trainer import Trainer
 from plot import Plot
 
-from toolkit.sampler import Sampler
+from tools.sampler import Sampler
 
 #gpu driver check
 sh = 'nvidia-smi'

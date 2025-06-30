@@ -4,7 +4,7 @@ logger = logging.getLogger(name = __name__)
 import pandas as pd
 import seaborn as sb
 
-from toolkit.sampler import Sampler
+from tools.sampler import Sampler
 
 sampler = Sampler()
 
@@ -20,15 +20,15 @@ class Plot:
     def __repr__(self):
         return 'plot'
 
-    def before_after(self, X, model, index = None):
+    def before_after(self, X, ae, index = None):
         if not isinstance(X, np.ndarray):
             raise TypeError('The array should be a \'numpy.ndarray\'.')
         if X.dtype != np.float64:
             X = X.astype('float64')
         if X.ndim != 2:
             raise ValueError('The array must be tabular')
-        if not isinstance(model, nn.Module):
-            raise TypeError('The model should be a \'torch.nn.Module\'.')
+        if not isinstance(ae, nn.Module):
+            raise TypeError('The autoencoder should be a \'torch.nn.Module\'.')
         if index is not None:
             if not isinstance(index, np.ndarray):
                 raise TypeError('The indices should be a \'numpy.ndarray\'.')
@@ -42,7 +42,7 @@ class Plot:
         X = X.copy()
 
         before = X.copy()
-        after = model.flow(X)
+        after = ae.flow(X)
 
         figs = []
         for lll in index:
@@ -76,20 +76,21 @@ class Plot:
         return figs
 
 
-    def dashes(self, X, model, sample = True, size = 300):
+    def dashes(self, X, ae, sample = True, size = 300):
         if not isinstance(X, np.ndarray):
             raise TypeError('The array should be a \'numpy.ndarray\'.')
-        if not isinstance(model, nn.Module):
-            raise TypeError('The model should be a \'torch.nn.Module\'.')
+        if not isinstance(ae, nn.Module):
+            raise TypeError('The autoencoder should be a \'torch.nn.Module\'.')
         if not isinstance(sample, bool):
             raise TypeError('\'sample\' should be boolean.')
         if not isinstance(size, int):
             raise TypeError('\'size\' should be an integer.')
-        if X.ndim != 2:
+        if not X.ndim == 2:
             raise ValueError('The array must be tabular.')
-        if size < 1:
+        if not size > 0:
             raise ValueError('\'size\' must be positive.')
-        if X.dtype != np.float64:
+        if not X.dtype == np.float64:
+            logger.warning('The dtype doesn\'t match.')
             X = X.astype('float64')
         X = X.copy()
 
@@ -98,8 +99,8 @@ class Plot:
         else:
             sample = sampler.sample(X, size = size)
 
-        compressed = model.process(sample, train = False)
-        compressed = model.encoder(compressed)
+        compressed = ae.process(sample, train = False)
+        compressed = ae.encoder(compressed)
         compressed = compressed.detach()    ###
         compressed = compressed.numpy()
 
@@ -131,22 +132,24 @@ class Plot:
         return fig
 
 
-    def errors(self, normal, anomalous, model, return_metric = False):
+    def errors(self, normal, anomalous, ae, return_metric = False):
         if not isinstance(normal, np.ndarray):
             raise TypeError('The normal should be a \'numpy.ndarray\'.')
         if not isinstance(anomalous, np.ndarray):
             raise TypeError('The anomalous should be a \'numpy.ndarray\'.')
-        if not isinstance(model, nn.Module):
-            raise TypeError('The model should be a \'torch.nn.Module\'.')
+        if not isinstance(ae, nn.Module):
+            raise TypeError('The autoencoder should be a \'torch.nn.Module\'.')
         if not isinstance(return_metric, bool):
             raise TypeError('\'return_metric\' should be boolean.')
-        if normal.ndim != 2:
+        if not normal.ndim == 2:
             raise ValueError('The normal must be tabular.')
-        if anomalous.ndim != 2:
+        if not anomalous.ndim == 2:
             raise ValueError('The anomalous must be tabular.')
-        if normal.dtype != np.float64:
+        if not normal.dtype == np.float64:
+            logger.warning('The dtype doesn\'t match.')
             normal = normal.astype('float64')
-        if anomalous.dtype != np.float64:
+        if not anomalous.dtype == np.float64:
+            logger.warning('The dtype doesn\'t match.')
             anomalous = anomalous.astype('float64')
         normal = normal.copy()
         anomalous = anomalous.copy()
@@ -159,11 +162,11 @@ class Plot:
 
         normal_error = diff(
             normal,
-            model.flow(normal),
+            ae.flow(normal),
             )
         anomalous_error = diff(
             anomalous,
-            model.flow(anomalous),
+            ae.flow(anomalous),
             )
 
         fig = pp.figure(layout = 'constrained')

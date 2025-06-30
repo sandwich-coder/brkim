@@ -49,7 +49,7 @@ class Autoencoder(nn.Module):
         return 'autoencoder'
 
     def forward(self, t):
-        if t.size(dim = 1) != 784:
+        if not t.size(dim = 1) == 784:
             raise ValueError('The number of features must be 784.')    # Checking of the number of features should be placed in the 'forward' instead of the 'process' and 'unprocess'.
         t = torch.clone(t)
 
@@ -66,10 +66,11 @@ class Autoencoder(nn.Module):
     def process(self, X, train = True):
         if not isinstance(X, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if X.dtype != np.float64:
-            X = X.astype('float64')
-        if X.ndim != 2:
+        if not X.ndim == 2:
             raise ValueError('The input must be tabular.')
+        if not X.dtype == np.float64:
+            logger.warning('The dtype doesn\'t match.')
+            X = X.astype('float64')
         X = X.copy()
 
         if not train:
@@ -90,10 +91,11 @@ class Autoencoder(nn.Module):
             raise TypeError('The input should be a \'torch.Tensor\'.')
         if processed.requires_grad:
             raise ValueError('The input must not be on the graph. \nThis method doesn\'nt automatically detach such Tensors.')
-        if processed.dtype != torch.float32:
-            processed = processed.to(torch.float32)
-        if processed.dim() != 2:
+        if not processed.dim() == 2:
             raise ValueError('The input must be tabular.')
+        if not processed.dtype == torch.float32:
+            logger.warning('The dtype doesn\'t match.')
+            processed = processed.to(torch.float32)
         processed = torch.clone(processed)
 
         _ = processed.numpy()
@@ -105,10 +107,11 @@ class Autoencoder(nn.Module):
     def flow(self, X):
         if not isinstance(X, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if X.dtype != np.float64:
-            X = X.astype('float64')
-        if X.ndim != 2:
+        if not X.ndim == 2:
             raise ValueError('The input must be tabular.')
+        if not X.dtype == np.float64:
+            logger.warning('The dtype doesn\'t match.')
+            X = X.astype('float64')
         X = X.copy()
 
         self.eval()

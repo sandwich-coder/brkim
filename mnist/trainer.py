@@ -40,32 +40,33 @@ class Trainer:
 
         self.batchloss = None
         self.trained_array = None
-        self.trained_model = None
+        self.trained_ae = None
 
     def __repr__(self):
         return 'trainer'
     
-    def train(self, X, model):
+    def train(self, X, ae):
         if not isinstance(X, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if not isinstance(model, nn.Module):
-            raise TypeError('The model should be a \'torch.nn.Module\'.')
-        if X.dtype != np.float64:
-            X = X.astype('float64')
-        if X.ndim != 2:
+        if not isinstance(ae, nn.Module):
+            raise TypeError('The autoencoder should be a \'torch.nn.Module\'.')
+        if not X.ndim == 2:
             raise ValueError('The input must be tabular.')
+        if not X.dtype == np.float64:
+            logger.warning('The dtype doesn\'t match.')
+            X = X.astype('float64')
         X = X.copy()
 
         #processed
-        data = model.process(X)
+        data = ae.process(X)
 
         #to gpu
         data = data.to(device)
-        model.to(device)
+        ae.to(device)
         logger.info('\'device\' is allocated to \'data\' and \'model\'.')
 
         optimizer = self.Optimizer(
-            model.parameters(),
+            ae.parameters(),
             lr = learning_rate,
             eps = epsilon,
             )
@@ -78,11 +79,11 @@ class Trainer:
         self.batchloss = []
         logger.info('Training begins.')
         for lll in range(epochs):
-            model.train()
+            ae.train()
             last_epoch = []
             for t in tqdm(loader, leave = False, ncols = 70):
 
-                output = model(t)
+                output = ae(t)
                 loss = self.loss_fn(output, t)
 
                 loss.backward()
@@ -108,11 +109,11 @@ class Trainer:
 
         self.batchloss = np.concatenate(self.batchloss, axis = 0)
         self.trained_array = X.copy()
-        self.trained_model = model
+        self.trained_ae = ae
         logger.info(' - Training finished - ')
 
         #back to cpu
-        model.cpu()
+        ae.cpu()
 
 
     def plot_losses(self):

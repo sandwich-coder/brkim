@@ -18,16 +18,16 @@ class Sampler:
             raise TypeError('\'axis\' should be an integer.')
         if not isinstance(replace, bool):
             raise TypeError('\'replace\' should be boolean.')
-        if A.ndim < 1:
+        if not A.ndim >= 1:
             raise ValueError('The array should be at least 1-dimensional.')
         if not -A.ndim <= axis < A.ndim:
             raise ValueError('\'axis\' must be valid of the array.')
         if size is not None:
             if size <= 0:
-                logger.error('The sample size must be positive.')
+                logger.warning('The sample size must be positive.')
                 size = 1
             if size > A.shape[axis]:
-                logger.error('The sample size is bigger than the sampled.')
+                logger.warning('The sample size is bigger than the sampled.')
                 size = A.shape[axis]
         else:
             if A.shape[axis] >= 10:
