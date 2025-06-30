@@ -30,10 +30,10 @@ class Sampler:
                 logger.warning('The sample size is bigger than the sampled.')
                 size = A.shape[axis]
         else:
-            if A.shape[axis] >= 10:
-                size = round(A.shape[axis] / 10)
-            else:
+            if not A.shape[axis] >= 10:
                 size = 1
+            else:
+                size = round(A.shape[axis] / 10)
         A = A.copy()
 
         index = np.random.choice(

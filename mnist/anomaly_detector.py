@@ -37,8 +37,6 @@ class AnomalyDetector:
         normal = normal.copy()
         anomalous = anomalous.copy()
 
-        self.ae = ae
-
         #Euclidean distance
         def diff(X, Y):
             error = (Y - X) ** 2
@@ -99,13 +97,11 @@ class AnomalyDetector:
             returns.append(fig)
         if return_metric:
             returns.append(diff)
-
-        if len(returns) == 0:
-            return None
-        elif len(returns) == 1:
-            return returns[0]
-        else:
-            return returns
+        if not len(returns) == 0:
+            if len(returns) == 1:
+                return returns[0]
+            else:
+                return returns
 
 
     def predict(self, contaminated):
