@@ -114,6 +114,7 @@ class Trainer:
         #back to cpu
         ae.cpu()
 
+        #stored
         self.batchloss = batchloss.copy()
         self.trained_array = X.copy()
         self.trained_ae = ae

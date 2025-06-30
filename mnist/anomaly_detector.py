@@ -125,5 +125,5 @@ class AnomalyDetector:
             self.ae.flow(contaminated),
             )
 
-        prediction = np.where(error >= self.threshold, True, False)
+        prediction = error >= self.threshold
         return prediction
