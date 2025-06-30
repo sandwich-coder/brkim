@@ -110,3 +110,24 @@ class Trainer:
 
         #back to cpu
         model.cpu()
+
+
+    def plot_descent(self):
+        fig = pp.figure(layout = 'constrained', figsize = (10, 7.3))
+        ax = fig.add_subplot()
+        ax.set_box_aspect(0.7)
+        ax.set_title('Descent')
+        pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
+
+        plot = ax.plot(
+            np.arange(1, len(self.descent)+1, dtype = 'int64'), self.descent,
+            marker = 'o', markersize = 0.3,
+            linestyle = '--', linewidth = 0.1,
+            color = 'slategrey',
+            label = 'final: {final}'.format(
+                final = round(self.batchloss_final, ndigits = 4),
+                ),
+            )
+        ax.legend()
+
+        return fig

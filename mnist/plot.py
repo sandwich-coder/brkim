@@ -67,27 +67,6 @@ class Plot:
         return figs
 
 
-    def history(self, trainer):
-        fig = pp.figure(layout = 'constrained', figsize = (10, 7.3))
-        ax = fig.add_subplot()
-        ax.set_box_aspect(0.7)
-        ax.set_title('Descent')
-        pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
-
-        plot = ax.plot(
-            np.arange(1, trainer.descent.shape[0]+1, dtype = 'int64'), trainer.descent,
-            marker = 'o', markersize = 0.3,
-            linestyle = '--', linewidth = 0.1,
-            color = 'slategrey',
-            label = 'final: {final}'.format(
-                final = round(trainer.batchloss_final, ndigits = 4),
-                )
-            )
-        ax.legend()
-
-        return fig
-
-
     def dashes(self, X, model, sample = True, size = 300):
         if not isinstance(X, np.ndarray):
             raise TypeError('The array should be a \'numpy.ndarray\'.')

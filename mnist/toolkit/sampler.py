@@ -23,12 +23,12 @@ class Sampler:
         if not -A.ndim <= axis < A.ndim:
             raise ValueError('\'axis\' must be valid of the array.')
         if size is not None:
-            if not 1 <= size <= A.shape[axis]:
-                logger.error('The sample size is smaller or bigger than the indices.')
-                if size < 1:
-                    size = 1
-                if size > A.shape[axis]:
-                    size = A.shape[axis]
+            if size < 1:
+                logger.error('The sample size is smaller than the sampled.')
+                size = 1
+            if size > A.shape[axis]:
+                logger.error('The sample size is bigger than the sampled.')
+                size = A.shape[axis]
         else:
             if A.shape[axis] >= 10:
                 size = round(A.shape[axis] / 10)

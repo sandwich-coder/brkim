@@ -15,7 +15,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 from loader import Loader
 from models.autoencoder import Autoencoder
 from trainer import Trainer
-from sampler import Sampler
+from toolkit.sampler import Sampler
 from plot import Plot
 
 #gpu driver check
@@ -66,8 +66,8 @@ normal = X.copy()
 anomalous = loader.load('cloths')
 anomalous = sampler.sample(anomalous, size = len(normal) // 11)
 
-#gradient descent
-descent = plot.history(trainer)
+#Gradient descent
+descent = trainer.plot_descent()
 descent.savefig('figures/history.png', dpi = 300)
 
 #normal reconstructions
