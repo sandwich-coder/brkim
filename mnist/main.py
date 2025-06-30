@@ -15,9 +15,10 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 from loader import Loader
 from models.autoencoder import Autoencoder
 from trainer import Trainer
-from plot import Plot
+from anomaly_detector import AnomalyDetector
 
 from tools.sampler import Sampler
+from tools.plotter import Plotter
 
 #gpu driver check
 sh = 'nvidia-smi'
@@ -58,20 +59,24 @@ trainer.train(X, model)
 Y = model.flow(X)
 Y_ = model.flow(X_)
 
+#separation
+normal = X.copy()
+normal_ = X_.copy()
+anomalous = sampler.sample(
+    loader.load('cloths'),
+    size = len(normal) // 11,
+    )
+anomalous_ = sampler.sample(
+    loader.load('cloths', train = False),
+    size = len(normal_) // 11,
+    )
+
 
 # - plot -
 
 os.makedirs('figures', exist_ok = True)
-plot = Plot()
+plotter = Plotter()
 np.random.seed(seed = 1)    #standardized
-
-normal = X.copy()
-anomalous = loader.load('cloths')
-anomalous = sampler.sample(anomalous, size = len(normal) // 11)
-
-#Gradient descent
-losses = trainer.plot_losses()
-losses.savefig('figures/losses.png', dpi = 300)
 
 #normal reconstructions
 os.makedirs('figures/before-after-normal', exist_ok = True)
@@ -79,7 +84,7 @@ temp = 30
 if temp > len(normal):
     temp = len(normal)
 temp = np.random.choice(np.arange(len(normal)), size = temp, replace = False)
-normal_reconstructions = plot.before_after(
+normal_reconstructions = plotter.before_after(
     normal,
     model,
     index = temp,
@@ -90,52 +95,37 @@ for l in range(len(normal_reconstructions)):
         ), dpi = 300)
 
 #dashes
-dashes = plot.dashes(normal, model, size = 500)
+dashes = plotter.dashes(normal, model, size = 500)
 dashes.savefig('figures/dashes.png', dpi = 300)
 
-#anomaly reconstructions
-os.makedirs('figures/before-after-anomalous', exist_ok = True)
-temp = 30
-if temp > len(anomalous):
-    temp = len(anomalous)
-temp = np.random.choice(np.arange(len(anomalous)), size = temp, replace = False)
-anomalous_reconstructions = plot.before_after(
-    anomalous,
-    model,
-    index = temp,
-    )
-for l in range(len(anomalous_reconstructions)):
-    anomalous_reconstructions[l].savefig('figures/before-after-anomalous/{index}.png'.format(
-        index = temp[l],
-        ), dpi = 300)
 
-#reconstruction errors
-errors, error_metric = plot.errors(normal, anomalous, model, return_metric = True)
-errors.savefig('figures/errors.png', dpi = 300)
+# - anomaly detection -
 
+detector = AnomalyDetector()
+detector.build(normal, anomalous, model, manual = True)
 
-# - anomaly detection (scan) -
-
+#train
 contaminated = np.concatenate([
     normal,
     anomalous,
     ], axis = 0)
-
 truth = np.zeros([len(contaminated)], dtype = 'int64')
 truth[len(normal):] = 1
 truth = truth.astype('bool')
 
-# The threshold is determined manually by observing the error plot.
-errors.show()
-threshold = input('threshold: ')
-threshold = float(threshold)
+#test
+contaminated_ = np.concatenate([
+    normal_,
+    anomalous_
+    ], axis = 0)
+truth_ = np.zeros([len(contaminated_)], dtype = 'int64')
+truth_[len(normal_):] = 1
+truth_ = truth_.astype('bool')
 
-error = error_metric(
-    contaminated,
-    model.flow(contaminated),
-    )
-prediction = np.where(error >= threshold, True, False)
+prediction = detector.predict(contaminated)
+prediction_ = detector.predict(contaminated_)
 
+#train
 print('\n\n')
 print('     precision (train): {precision}'.format(
     precision = precision_score(truth, prediction),
@@ -147,29 +137,7 @@ print('            F1 (train): {f1}'.format(
     f1 = f1_score(truth, prediction),
     ))
 
-
-# - anomaly detection (test) -
-
-normal_ = X_.copy()
-anomalous_ = loader.load('cloths', train = False)
-anomalous_ = sampler.sample(anomalous_, size = len(normal_) // 11)
-
-contaminated_ = np.concatenate([
-    normal_,
-    anomalous_
-    ], axis = 0)
-
-truth_ = np.zeros([len(contaminated_)], dtype = 'int64')
-truth_[len(normal_):] = 1
-truth_ = truth_.astype('bool')
-
-#Euclidean distance
-error_ = error_metric(
-    contaminated_,
-    model.flow(contaminated_),
-    )
-prediction_ = np.where(error_ >= threshold, True, False)
-
+#test
 print('\n\n')
 print('      precision (test): {precision}'.format(
     precision = precision_score(truth_, prediction_),

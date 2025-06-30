@@ -7,6 +7,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 class AnomalyDetector:
     def __init__(self):
         self.ae = None
+        self.metric = None
         self.threshold = None
     def __repr__(self):
         return 'anomaly detector'
@@ -86,11 +87,16 @@ class AnomalyDetector:
 
             ax.legend()
             fig.show()
-            self.threshold = input('threshold: ')
-            self.threshold = float(self.threshold)
+            threshold = input('threshold: ')
+            threshold = float(threshold)
 
         else:
-            self.threshold = np.quantile(normal_error, 0.95, axis = 0)
+            threshold = np.quantile(normal_error, 0.95, axis = 0)
+
+        #stored
+        self.ae = ae
+        self.metric = diff
+        self.threshold = threshold
 
         returns = []
         if return_errorplot:
@@ -113,3 +119,11 @@ class AnomalyDetector:
             logger.warning('The dtype doesn\'t match.')
             contaminated = contaminated.astype('float64')
         contaminated = contaminated.copy()
+
+        error = self.metric(
+            contaminated,
+            self.ae.flow(contaminated),
+            )
+
+        prediction = np.where(error >= self.threshold, True, False)
+        return prediction

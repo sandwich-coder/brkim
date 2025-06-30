@@ -9,7 +9,7 @@ from tools.sampler import Sampler
 sampler = Sampler()
 
 
-class Plot:
+class Plotter:
     """
     reference = [
         sampler,

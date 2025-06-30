@@ -76,7 +76,7 @@ class Trainer:
             batch_size = batch_size,
             shuffle = True,
             )
-        self.batchloss = []
+        batchloss = []
         logger.info('Training begins.')
         for lll in range(epochs):
             ae.train()
@@ -105,15 +105,18 @@ class Trainer:
                 epochloss = last_epoch.mean(axis = 0, dtype = 'float64').round(decimals = 6),
                 ))
 
-            self.batchloss.append(last_epoch)
+            batchloss.append(last_epoch)
 
-        self.batchloss = np.concatenate(self.batchloss, axis = 0)
-        self.trained_array = X.copy()
-        self.trained_ae = ae
+        batchloss = np.concatenate(batchloss, axis = 0)
+
         logger.info(' - Training finished - ')
 
         #back to cpu
         ae.cpu()
+
+        self.batchloss = batchloss.copy()
+        self.trained_array = X.copy()
+        self.trained_ae = ae
 
 
     def plot_losses(self):
