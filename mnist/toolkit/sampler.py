@@ -23,8 +23,8 @@ class Sampler:
         if not -A.ndim <= axis < A.ndim:
             raise ValueError('\'axis\' must be valid of the array.')
         if size is not None:
-            if size < 1:
-                logger.error('The sample size is smaller than the sampled.')
+            if size <= 0:
+                logger.error('The sample size must be positive.')
                 size = 1
             if size > A.shape[axis]:
                 logger.error('The sample size is bigger than the sampled.')

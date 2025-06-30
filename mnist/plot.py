@@ -4,8 +4,17 @@ logger = logging.getLogger(name = __name__)
 import pandas as pd
 import seaborn as sb
 
+from toolkit.sampler import Sampler
+
+sampler = Sampler()
+
 
 class Plot:
+    """
+    reference = [
+        sampler,
+        ]
+    """
     def __init__(self):
         pass
     def __repr__(self):
@@ -70,27 +79,24 @@ class Plot:
     def dashes(self, X, model, sample = True, size = 300):
         if not isinstance(X, np.ndarray):
             raise TypeError('The array should be a \'numpy.ndarray\'.')
-        if X.dtype != np.float64:
-            X = X.astype('float64')
-        if X.ndim != 2:
-            raise ValueError('The array must be tabular.')
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
         if not isinstance(sample, bool):
             raise TypeError('\'sample\' should be boolean.')
         if not isinstance(size, int):
             raise TypeError('\'size\' should be an integer.')
+        if X.ndim != 2:
+            raise ValueError('The array must be tabular.')
         if size < 1:
             raise ValueError('\'size\' must be positive.')
+        if X.dtype != np.float64:
+            X = X.astype('float64')
         X = X.copy()
 
         if not sample:
             sample = X.copy()
         else:
-            sample = np.random.choice(np.arange(
-                len(X),
-                ), size = size, replace = False)
-            sample = X[sample]
+            sample = sampler.sample(X, size = size)
 
         compressed = model.process(sample, train = False)
         compressed = model.encoder(compressed)
@@ -128,20 +134,20 @@ class Plot:
     def errors(self, normal, anomalous, model, return_metric = False):
         if not isinstance(normal, np.ndarray):
             raise TypeError('The normal should be a \'numpy.ndarray\'.')
-        if normal.dtype != np.float64:
-            normal = normal.astype('float64')
-        if normal.ndim != 2:
-            raise ValueError('The normal must be tabular.')
         if not isinstance(anomalous, np.ndarray):
             raise TypeError('The anomalous should be a \'numpy.ndarray\'.')
-        if anomalous.dtype != np.float64:
-            anomalous = anomalous.astype('float64')
-        if anomalous.ndim != 2:
-            raise ValueError('The anomalous must be tabular.')
         if not isinstance(model, nn.Module):
             raise TypeError('The model should be a \'torch.nn.Module\'.')
         if not isinstance(return_metric, bool):
             raise TypeError('\'return_metric\' should be boolean.')
+        if normal.ndim != 2:
+            raise ValueError('The normal must be tabular.')
+        if anomalous.ndim != 2:
+            raise ValueError('The anomalous must be tabular.')
+        if normal.dtype != np.float64:
+            normal = normal.astype('float64')
+        if anomalous.dtype != np.float64:
+            anomalous = anomalous.astype('float64')
         normal = normal.copy()
         anomalous = anomalous.copy()
 
