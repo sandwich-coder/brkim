@@ -221,7 +221,7 @@ class Plotter:
         if not isinstance(sample, bool):
             raise TypeError('\'sample\' should be boolean.')
         if not isinstance(size, int):
-            raise TypeError('\'size\' should be boolean.')
+            raise TypeError('\'size\' should be an integer.')
         if not X.ndim == 2:
             raise ValueError('The array should be tabular.')
         if not size > 0:
@@ -272,7 +272,7 @@ class Plotter:
         if not isinstance(sample, bool):
             raise TypeError('\'sample\' should be boolean.')
         if not isinstance(size, int):
-            raise TypeError('\'size\' should be boolean.')
+            raise TypeError('\'size\' should be an integer.')
         if not X.ndim == 2:
             raise ValueError('The array should be tabular.')
         if not size > 0:
