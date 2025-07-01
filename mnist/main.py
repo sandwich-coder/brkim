@@ -50,7 +50,7 @@ X_ = loader.load('mnist', train = False)
 normal = X.copy()
 anomalous = sampler.sample(
     loader.load('cloths'),
-    size = len(normal) // 11,
+    size = len(normal) // 9,
     )
 contaminated = np.concatenate([
     normal,
@@ -63,7 +63,7 @@ truth = truth.astype('bool')
 normal_ = X_.copy()
 anomalous_ = sampler.sample(
     loader.load('cloths', train = False),
-    size = len(normal_) // 11,
+    size = len(normal_) // 9,
     )
 contaminated_ = np.concatenate([
     normal_,

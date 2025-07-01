@@ -1,1 +1,1 @@
-'if' statements follow the "false-first" rule. Furthermore, 'expected_true' is not inverted as 'if expected_true_inverted' but 'if not expected_true'.
+'if' statements follow the "false-first" rule. Furthermore, 'expected_true' is not inverted as 'if expected_true_inverted' but putting or erasing 'not' as 'if not expected_true'.
