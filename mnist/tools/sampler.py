@@ -19,10 +19,10 @@ class Sampler:
             raise TypeError('\'replace\' should be boolean.')
         if not A.ndim >= 1:
             raise ValueError('The array should be at least 1-dimensional.')
-        if not -A.ndim <= axis < A.ndim:
-            raise ValueError('Not a valid axis.')
         if size < 1:
             raise ValueError('The sample size must be positive.')
+        if not -A.ndim <= axis < A.ndim:
+            raise ValueError('Not a valid axis.')
         if size > A.shape[axis]:
             logger.warning('The sample size is bigger than the sampled.')
             size = A.shape[axis]
