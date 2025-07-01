@@ -23,7 +23,7 @@ from tools.sampler import Sampler
 sh = 'nvidia-smi'
 sh_ = subprocess.run('which ' + sh, shell = True, capture_output = True, text = True)
 if sh_.stdout == '':
-    logger.info('Command \'{command}\' does not exist.'.format(command = sh))
+    logger.info('The nvidia driver does not exist.'.format(command = sh))
 else:
     sh_ = subprocess.run(
         sh,
@@ -46,6 +46,9 @@ sampler = Sampler()
 loader = Loader()
 X = loader.load('mnist')
 X_ = loader.load('mnist', train = False)
+
+
+# - prepared -
 
 #train
 normal = X.copy()
@@ -74,6 +77,7 @@ contaminated_ = np.concatenate([
 truth_ = np.zeros([len(contaminated_)], dtype = 'int64')
 truth_[len(normal_):] = 1
 truth_ = truth_.astype('bool')
+
 
 #model
 ae = Autoencoder()
