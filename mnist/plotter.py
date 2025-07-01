@@ -176,7 +176,7 @@ class Plotter:
         if not sample:
             sample = X.copy()
         else:
-            sample = sampler.sample(X, size = size)
+            sample = sampler.sample(X, size)
 
         fig = pp.figure(layout = 'constrained', figsize = (10, 5.4))
         ax = fig.add_subplot()
@@ -234,7 +234,7 @@ class Plotter:
         if not sample:
             sample = X.copy()
         else:
-            sample = sampler.sample(X, size = size)
+            sample = sampler.sample(X, size)
 
         fig = pp.figure(layout = 'constrained', figsize = (10, 5.4))
         ax = fig.add_subplot()
@@ -285,7 +285,7 @@ class Plotter:
         if not sample:
             sample = X.copy()
         else:
-            sample = sampler.sample(X, size = size)
+            sample = sampler.sample(X, size)
 
         fig = pp.figure(layout = 'constrained', figsize = (10, 5.4))
         ax = fig.add_subplot()
