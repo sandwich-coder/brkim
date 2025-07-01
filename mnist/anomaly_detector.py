@@ -12,7 +12,7 @@ class AnomalyDetector:
     def __repr__(self):
         return 'anomaly detector'
 
-    def build(self, normal, anomalous, ae, manual = False, return_errorplot = False, return_metric = False):
+    def build(self, normal, anomalous, ae, manual = False):
         if not isinstance(normal, np.ndarray):
             raise TypeError('The normal should be a \'numpy.ndarray\'.')
         if not isinstance(anomalous, np.ndarray):
@@ -21,10 +21,6 @@ class AnomalyDetector:
             raise TypeError('The autoencoder should be a \'torch.nn.Module\'.')
         if not isinstance(manual, bool):
             raise TypeError('\'manual\' should be boolean.')
-        if not isinstance(return_errorplot, bool):
-            raise TypeError('\'return_errorplot\' should be boolean.')
-        if not isinstance(return_metric, bool):
-            raise TypeError('\'return_metric\' should be boolean.')
         if not (normal.ndim == anomalous.ndim == 2):
             raise ValueError('The arrays must be tabular.')
         if not (normal.shape[1] == anomalous.shape[1]):
@@ -86,28 +82,18 @@ class AnomalyDetector:
                 )
 
             ax.legend()
+
             fig.show()
             threshold = input('threshold: ')
             threshold = float(threshold)
 
         else:
-            threshold = np.quantile(normal_error, 0.95, axis = 0)
+            threshold = np.quantile(normal_error, 0.99, axis = 0)
 
         #stored
         self.ae = ae
         self.metric = diff
         self.threshold = threshold
-
-        returns = []
-        if return_errorplot:
-            returns.append(fig)
-        if return_metric:
-            returns.append(diff)
-        if not len(returns) == 0:
-            if len(returns) == 1:
-                return returns[0]
-            else:
-                return returns
 
 
     def predict(self, contaminated):

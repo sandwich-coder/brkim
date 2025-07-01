@@ -47,43 +47,11 @@ loader = Loader()
 X = loader.load('mnist')
 X_ = loader.load('mnist', train = False)
 
-#model
-ae = Autoencoder()
-
-#train
-trainer = Trainer()
-trainer.train(X, ae)
-
-#test
-Y = ae.flow(X)
-Y_ = ae.flow(X_)
-
-#anomalies
 normal = X.copy()
-normal_ = X_.copy()
 anomalous = sampler.sample(
     loader.load('cloths'),
     size = len(normal) // 11,
     )
-anomalous_ = sampler.sample(
-    loader.load('cloths', train = False),
-    size = len(normal_) // 11,
-    )
-
-plotter = Plotter()
-
-
-# - anomaly detection -
-
-detector = AnomalyDetector()
-errors = detector.build(normal, anomalous, ae, manual = True, return_errorplot = True)
-errors_ = plotter.errors(normal_, anomalous_, ae)
-
-os.makedirs('figures', exist_ok = True)
-errors.savefig('figures/errors-train.png', dpi = 300)
-errors_.savefig('figures/errors-test.png', dpi = 300)
-
-#train
 contaminated = np.concatenate([
     normal,
     anomalous,
@@ -92,7 +60,11 @@ truth = np.zeros([len(contaminated)], dtype = 'int64')
 truth[len(normal):] = 1
 truth = truth.astype('bool')
 
-#test
+normal_ = X_.copy()
+anomalous_ = sampler.sample(
+    loader.load('cloths', train = False),
+    size = len(normal_) // 11,
+    )
 contaminated_ = np.concatenate([
     normal_,
     anomalous_
@@ -100,6 +72,41 @@ contaminated_ = np.concatenate([
 truth_ = np.zeros([len(contaminated_)], dtype = 'int64')
 truth_[len(normal_):] = 1
 truth_ = truth_.astype('bool')
+
+#model
+ae = Autoencoder()
+
+#train
+trainer = Trainer()
+trainer.train(X, ae)
+
+
+# - plots -
+
+plotter = Plotter()
+
+errors = plotter.errors(normal, anomalous, ae)
+dashes = plotter.dashes(normal, ae)
+violins = plotter.violins(normal, ae)
+
+errors_ = plotter.errors(normal_, anomalous_, ae)
+dashes_ = plotter.dashes(normal_, ae)
+violins_ = plotter.violins(normal_, ae)
+
+#saved
+os.makedirs('figures', exist_ok = True)
+errors.savefig('figures/errors-train.png', dpi = 300)
+dashes.savefig('figures/dashes-train.png', dpi = 300)
+violins.savefig('figures/violins-train.png', dpi = 300)
+errors_.savefig('figures/errors-test.png', dpi = 300)
+dashes_.savefig('figures/dashes-test.png', dpi = 300)
+violins_.savefig('figures/violins-test.png', dpi = 300)
+
+
+# - anomaly detection -
+
+detector = AnomalyDetector()
+detector.build(normal, anomalous, ae)
 
 prediction = detector.predict(contaminated)
 prediction_ = detector.predict(contaminated_)
