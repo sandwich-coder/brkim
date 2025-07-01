@@ -8,22 +8,6 @@ class Autoencoder(nn.Module):
     def __init__(self):
         super().__init__()
 
-        """
-        self.encoder = nn.Sequential(
-
-            # Doesn't work as expected. Lack of experience.
-            nn.Sequential(nn.Conv2d(kernel_size = (9, 9), in_channels = 1, out_channels = 1), nn.GELU()),    #20*20
-            nn.Sequential(nn.Conv2d(kernel_size = (6, 6), in_channels = 1, out_channels = 1), nn.GELU()),    #15*15
-            nn.Sequential(nn.Conv2d(kernel_size = (5, 5), in_channels = 1, out_channels = 1), nn.GELU()),    #11*11
-            nn.Sequential(nn.Conv2d(kernel_size = (3, 3), in_channels = 1, out_channels = 1), nn.GELU()),    #9*9
-
-            nn.Flatten(),
-            nn.Sequential(nn.Linear(81, 27), nn.GELU()),
-            nn.Sequential(nn.Linear(27, 5), nn.Tanh()),
-            
-            )
-        """
-
         self.encoder = nn.Sequential(
             nn.Sequential(nn.Linear(784, 1000), nn.GELU()),
             nn.Sequential(nn.Linear(1000, 333), nn.GELU()),
@@ -52,10 +36,6 @@ class Autoencoder(nn.Module):
         if not t.size(dim = 1) == 784:
             raise ValueError('The number of features must be 784.')    # Checking of the number of features should be placed in the 'forward' instead of the 'process' and 'unprocess'.
         t = torch.clone(t)
-
-        """
-        t = t.reshape([-1, 1, 28, 28])
-        """
 
         t = self.encoder(t)
         t = self.decoder(t)
