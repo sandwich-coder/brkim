@@ -47,6 +47,7 @@ loader = Loader()
 X = loader.load('mnist')
 X_ = loader.load('mnist', train = False)
 
+#train
 normal = X.copy()
 anomalous = sampler.sample(
     loader.load('cloths'),
@@ -60,6 +61,7 @@ truth = np.zeros([len(contaminated)], dtype = 'int64')
 truth[len(normal):] = 1
 truth = truth.astype('bool')
 
+#test
 normal_ = X_.copy()
 anomalous_ = sampler.sample(
     loader.load('cloths', train = False),
@@ -76,7 +78,7 @@ truth_ = truth_.astype('bool')
 #model
 ae = Autoencoder()
 
-#train
+#trained
 trainer = Trainer()
 trainer.train(X, ae)
 
@@ -87,19 +89,23 @@ plotter = Plotter()
 
 errors = plotter.errors(normal, anomalous, ae)
 dashes = plotter.dashes(normal, ae)
+boxes = plotter.boxes(normal, ae)
 violins = plotter.violins(normal, ae)
 
 errors_ = plotter.errors(normal_, anomalous_, ae)
 dashes_ = plotter.dashes(normal_, ae)
+boxes_ = plotter.boxes(normal_, ae)
 violins_ = plotter.violins(normal_, ae)
 
 #saved
 os.makedirs('figures', exist_ok = True)
 errors.savefig('figures/errors-train.png', dpi = 300)
 dashes.savefig('figures/dashes-train.png', dpi = 300)
+boxes.savefig('figures/boxes-train.png', dpi = 300)
 violins.savefig('figures/violins-train.png', dpi = 300)
 errors_.savefig('figures/errors-test.png', dpi = 300)
 dashes_.savefig('figures/dashes-test.png', dpi = 300)
+boxes_.savefig('figures/boxes-test.png', dpi = 300)
 violins_.savefig('figures/violins-test.png', dpi = 300)
 
 

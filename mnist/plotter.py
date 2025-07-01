@@ -213,6 +213,57 @@ class Plotter:
         return fig
 
 
+    def boxes(self, X, ae, sample = True, size = 300):
+        if not isinstance(X, np.ndarray):
+            raise TypeError('The array should be a \'numpy.ndarray\'.')
+        if not isinstance(ae, nn.Module):
+            raise TypeError('The autoencoder should be a \'torch.nn.Module\'.')
+        if not isinstance(sample, bool):
+            raise TypeError('\'sample\' should be boolean.')
+        if not isinstance(size, int):
+            raise TypeError('\'size\' should be boolean.')
+        if not X.ndim == 2:
+            raise ValueError('The array should be tabular.')
+        if not size > 0:
+            raise ValueError('The sample size must be positive.')
+        if not X.dtype == 'float64':
+            logger.warning('The dtype doesn\'t match.')
+            X = X.astype('float64')
+        X = X.copy()        
+
+        if not sample:
+            sample = X.copy()
+        else:
+            sample = sampler.sample(X, size = size)
+
+        fig = pp.figure(layout = 'constrained', figsize = (10, 5.4))
+        ax = fig.add_subplot()
+        ax.set_box_aspect(0.5)
+        ax.set_title('Violins   (#samples: {count})'.format(
+            count = len(sample),
+            ))
+        ax.set_xlabel('feature #')
+        ax.set_ylabel('value')
+        pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
+
+        compressed = ae.process(sample, train = False)
+        compressed = ae.encoder(compressed)
+        compressed = compressed.detach()    ###
+        compressed = compressed.numpy()
+        compressed = compressed.astype('float64')
+
+        sb.boxplot(
+            data = _to_frame(compressed),
+            x = 'feature', y = 'value',
+            orient = 'x',
+            whis = (0, 100),
+            color = 'tab:orange',
+            ax = ax,
+            )
+
+        return fig
+
+
     def violins(self, X, ae, sample = True, size = 300):
         if not isinstance(X, np.ndarray):
             raise TypeError('The array should be a \'numpy.ndarray\'.')
@@ -222,12 +273,13 @@ class Plotter:
             raise TypeError('\'sample\' should be boolean.')
         if not isinstance(size, int):
             raise TypeError('\'size\' should be boolean.')
-        if not X.dtype == 'float64':
-            raise ValueError('The array must be of \'numpy.float64\'.')
         if not X.ndim == 2:
             raise ValueError('The array should be tabular.')
         if not size > 0:
             raise ValueError('The sample size must be positive.')
+        if not X.dtype == 'float64':
+            logger.warning('The dtype doesn\'t match.')
+            X = X.astype('float64')
         X = X.copy()
 
         if not sample:
