@@ -239,7 +239,7 @@ class Plotter:
         fig = pp.figure(layout = 'constrained', figsize = (10, 5.4))
         ax = fig.add_subplot()
         ax.set_box_aspect(0.5)
-        ax.set_title('Violins   (#samples: {count})'.format(
+        ax.set_title('Boxes   (#samples: {count})'.format(
             count = len(sample),
             ))
         ax.set_xlabel('feature #')
