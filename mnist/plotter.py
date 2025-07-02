@@ -15,6 +15,14 @@ def _to_frame(array):
     frame = frame.astype({'feature':'int64'})
     return frame
 
+def _compress(X, ae):
+    Z = ae.process(X, train = False)
+    Z = ae.encoder(Z)
+    Z = Z.detach()    ###
+    Z = Z.numpy()
+    Z = Z.astype('float64')
+    return Z
+
 sampler = Sampler()
 
 
@@ -22,6 +30,7 @@ class Plotter:
     """
     reference = [
         _to_frame,
+        _compress,
         sampler,
         ]
     """
@@ -166,7 +175,7 @@ class Plotter:
             raise TypeError('\'size\' should be an integer.')
         if X.ndim != 2:
             raise ValueError('The array must be tabular.')
-        if size <= 0:
+        if size < 1:
             raise ValueError('\'size\' must be positive.')
         if X.dtype != np.float64:
             logger.warning('The dtype doesn\'t match.')
@@ -188,11 +197,7 @@ class Plotter:
         ax.set_ylabel('value')
         pp.setp(ax.get_yticklabels(), ha = 'right', va = 'center', rotation = 90)
 
-        compressed = ae.process(sample, train = False)
-        compressed = ae.encoder(compressed)
-        compressed = compressed.detach()    ###
-        compressed = compressed.numpy()
-        compressed = compressed.astype('float64')
+        compressed = _compress(sample, ae)
 
         plots = []
         index = range(len(compressed))
@@ -224,7 +229,7 @@ class Plotter:
             raise TypeError('\'size\' should be an integer.')
         if X.ndim != 2:
             raise ValueError('The array should be tabular.')
-        if size <= 0:
+        if size < 1:
             raise ValueError('The sample size must be positive.')
         if X.dtype != 'float64':
             logger.warning('The dtype doesn\'t match.')
@@ -246,11 +251,7 @@ class Plotter:
         ax.set_ylabel('value')
         pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
 
-        compressed = ae.process(sample, train = False)
-        compressed = ae.encoder(compressed)
-        compressed = compressed.detach()    ###
-        compressed = compressed.numpy()
-        compressed = compressed.astype('float64')
+        compressed = _compress(sample, ae)
 
         sb.boxplot(
             data = _to_frame(compressed),
@@ -275,7 +276,7 @@ class Plotter:
             raise TypeError('\'size\' should be an integer.')
         if X.ndim != 2:
             raise ValueError('The array should be tabular.')
-        if size <= 0:
+        if size < 1:
             raise ValueError('The sample size must be positive.')
         if X.dtype != 'float64':
             logger.warning('The dtype doesn\'t match.')
@@ -297,11 +298,7 @@ class Plotter:
         ax.set_ylabel('value')
         pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
 
-        compressed = ae.process(sample, train = False)
-        compressed = ae.encoder(compressed)
-        compressed = compressed.detach()    ###
-        compressed = compressed.numpy()
-        compressed = compressed.astype('float64')
+        compressed = _compress(sample, ae)
 
         sb.violinplot(
             data = _to_frame(compressed),

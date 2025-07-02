@@ -17,7 +17,7 @@ class Sampler:
             raise TypeError('\'axis\' should be an integer.')
         if not isinstance(replace, bool):
             raise TypeError('\'replace\' should be boolean.')
-        if A.ndim <= 0:
+        if A.ndim < 1:
             raise ValueError('The array should be at least 1-dimensional.')
         if size < 1:
             raise ValueError('The sample size must be positive.')

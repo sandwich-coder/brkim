@@ -8,7 +8,7 @@ class Autoencoder(nn.Module):
     def __init__(self, res = 784):
         if not isinstance(res, int):
             raise TypeError('The input dim should be an integer.')
-        if res <= 0:
+        if res < 1:
             raise ValueError('The input dim must be positive.')
         super().__init__()
         self.res = res
