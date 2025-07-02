@@ -95,12 +95,12 @@ class Plotter:
             raise TypeError('The autoencoder should be a \'torch.nn.Module\'.')
         if not (normal.ndim == anomalous.ndim == 2):
             raise ValueError('The arrays must be tabular.')
-        if not (normal.shape[1] == anomalous.shape[1]):
+        if normal.shape[1] != anomalous.shape[1]:
             raise ValueError('The normal and anomalous must have the same number of features.')
-        if not normal.dtype == np.float64:
+        if normal.dtype != np.float64:
             logger.warning('The dtype doesn\'t match.')
             normal = normal.astype('float64')
-        if not anomalous.dtype == np.float64:
+        if anomalous.dtype != np.float64:
             logger.warning('The dtype doesn\'t match.')
             anomalous = anomalous.astype('float64')
         normal = normal.copy()
@@ -164,11 +164,11 @@ class Plotter:
             raise TypeError('\'sample\' should be boolean.')
         if not isinstance(size, int):
             raise TypeError('\'size\' should be an integer.')
-        if not X.ndim == 2:
+        if X.ndim != 2:
             raise ValueError('The array must be tabular.')
-        if not size > 0:
+        if size <= 0:
             raise ValueError('\'size\' must be positive.')
-        if not X.dtype == np.float64:
+        if X.dtype != np.float64:
             logger.warning('The dtype doesn\'t match.')
             X = X.astype('float64')
         X = X.copy()
@@ -196,8 +196,8 @@ class Plotter:
 
         plots = []
         index = range(len(compressed))
-        for ll in index:
-            instance = compressed[ll]
+        for lll in index:
+            instance = compressed[lll]
 
             plot = ax.plot(
                 range(1, 1+len(instance)), instance,
@@ -222,11 +222,11 @@ class Plotter:
             raise TypeError('\'sample\' should be boolean.')
         if not isinstance(size, int):
             raise TypeError('\'size\' should be an integer.')
-        if not X.ndim == 2:
+        if X.ndim != 2:
             raise ValueError('The array should be tabular.')
-        if not size > 0:
+        if size <= 0:
             raise ValueError('The sample size must be positive.')
-        if not X.dtype == 'float64':
+        if X.dtype != 'float64':
             logger.warning('The dtype doesn\'t match.')
             X = X.astype('float64')
         X = X.copy()        
@@ -273,11 +273,11 @@ class Plotter:
             raise TypeError('\'sample\' should be boolean.')
         if not isinstance(size, int):
             raise TypeError('\'size\' should be an integer.')
-        if not X.ndim == 2:
+        if X.ndim != 2:
             raise ValueError('The array should be tabular.')
-        if not size > 0:
+        if size <= 0:
             raise ValueError('The sample size must be positive.')
-        if not X.dtype == 'float64':
+        if X.dtype != 'float64':
             logger.warning('The dtype doesn\'t match.')
             X = X.astype('float64')
         X = X.copy()

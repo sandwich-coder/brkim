@@ -50,9 +50,9 @@ class Trainer:
             raise TypeError('The input should be a \'numpy.ndarray\'.')
         if not isinstance(ae, nn.Module):
             raise TypeError('The autoencoder should be a \'torch.nn.Module\'.')
-        if not X.ndim == 2:
+        if X.ndim != 2:
             raise ValueError('The input must be tabular.')
-        if not X.dtype == np.float64:
+        if X.dtype != np.float64:
             logger.warning('The dtype doesn\'t match.')
             X = X.astype('float64')
         X = X.copy()

@@ -5,23 +5,26 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 class Autoencoder(nn.Module):
-    def __init__(self):
+    def __init__(self, res = 784):
+        if not isinstance(res, int):
+            raise TypeError('The input dim should be an integer.')
+        if res <= 0:
+            raise ValueError('The input dim must be positive.')
         super().__init__()
+        self.res = res
 
         self.encoder = nn.Sequential(
-            nn.Sequential(nn.Linear(784, 1000), nn.GELU()),
-            nn.Sequential(nn.Linear(1000, 333), nn.GELU()),
-            nn.Sequential(nn.Linear(333, 111), nn.GELU()),
-            nn.Sequential(nn.Linear(111, 37), nn.GELU()),
-            nn.Sequential(nn.Linear(37, 10), nn.Tanh()),
+            nn.Sequential(nn.Linear(self.res, 1000), nn.Dropout(0.1), nn.GELU()),
+            nn.Sequential(nn.Linear(1000, 333), nn.Dropout(0.1), nn.GELU()),
+            nn.Sequential(nn.Linear(333, 111), nn.Dropout(0.1), nn.GELU()),
+            nn.Sequential(nn.Linear(111, 20), nn.Dropout(0.1), nn.Tanh()),
             )
 
         self.decoder = nn.Sequential(
-            nn.Sequential(nn.Linear(10, 37), nn.GELU()),
-            nn.Sequential(nn.Linear(37, 111), nn.GELU()),
-            nn.Sequential(nn.Linear(111, 333), nn.GELU()),
-            nn.Sequential(nn.Linear(333, 1000), nn.GELU()),
-            nn.Sequential(nn.Linear(1000, 784), nn.Tanh()),
+            nn.Sequential(nn.Linear(20, 111), nn.Dropout(0.1), nn.GELU()),
+            nn.Sequential(nn.Linear(111, 333), nn.Dropout(0.1), nn.GELU()),
+            nn.Sequential(nn.Linear(333, 1000), nn.Dropout(0.1), nn.GELU()),
+            nn.Sequential(nn.Linear(1000, self.res), nn.Dropout(0.1), nn.Tanh()),
             )
 
         #initialized
@@ -33,8 +36,10 @@ class Autoencoder(nn.Module):
         return 'autoencoder'
 
     def forward(self, t):
-        if not t.size(dim = 1) == 784:
-            raise ValueError('The number of features must be 784.')    # Checking of the number of features should be placed in the 'forward' instead of the 'process' and 'unprocess'.
+        if t.size(dim = 1) != self.res:
+            raise ValueError('The number of features must be {input_dim}.'.format(
+                input_dim = self.res,
+                ))    # Checking of the number of features should be placed in the 'forward' instead of the 'process' and 'unprocess'.
         t = torch.clone(t)
 
         t = self.encoder(t)
@@ -46,9 +51,9 @@ class Autoencoder(nn.Module):
     def process(self, X, train = True):
         if not isinstance(X, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if not X.ndim == 2:
+        if X.ndim != 2:
             raise ValueError('The input must be tabular.')
-        if not X.dtype == np.float64:
+        if X.dtype != np.float64:
             logger.warning('The dtype doesn\'t match.')
             X = X.astype('float64')
         X = X.copy()
@@ -71,9 +76,9 @@ class Autoencoder(nn.Module):
             raise TypeError('The input should be a \'torch.Tensor\'.')
         if processed.requires_grad:
             raise ValueError('The input must not be on the graph. \nThis method doesn\'nt automatically detach such Tensors.')
-        if not processed.dim() == 2:
+        if processed.dim() != 2:
             raise ValueError('The input must be tabular.')
-        if not processed.dtype == torch.float32:
+        if processed.dtype != torch.float32:
             logger.warning('The dtype doesn\'t match.')
             processed = processed.to(torch.float32)
         processed = torch.clone(processed)
@@ -87,9 +92,9 @@ class Autoencoder(nn.Module):
     def flow(self, X):
         if not isinstance(X, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if not X.ndim == 2:
+        if X.ndim != 2:
             raise ValueError('The input must be tabular.')
-        if not X.dtype == np.float64:
+        if X.dtype != np.float64:
             logger.warning('The dtype doesn\'t match.')
             X = X.astype('float64')
         X = X.copy()

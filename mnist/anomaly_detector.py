@@ -23,12 +23,12 @@ class AnomalyDetector:
             raise TypeError('\'manual\' should be boolean.')
         if not (normal.ndim == anomalous.ndim == 2):
             raise ValueError('The arrays must be tabular.')
-        if not (normal.shape[1] == anomalous.shape[1]):
+        if normal.shape[1] != anomalous.shape[1]:
             raise ValueError('The normal and anomalous must have the same number of features.')
-        if not normal.dtype == np.float64:
+        if normal.dtype != np.float64:
             logger.warning('The dtype doesn\'t match.')
             normal = normal.astype('float64')
-        if not anomalous.dtype == np.float64:
+        if anomalous.dtype != np.float64:
             logger.warning('The dtype doesn\'t match.')
             anomalous = anomalous.astype('float64')
         normal = normal.copy()
@@ -99,9 +99,9 @@ class AnomalyDetector:
     def predict(self, contaminated):
         if not isinstance(contaminated, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if not contaminated.ndim == 2:
+        if contaminated.ndim != 2:
             raise ValueError('The input should be tabular.')
-        if not contaminated.dtype == np.float64:
+        if contaminated.dtype != np.float64:
             logger.warning('The dtype doesn\'t match.')
             contaminated = contaminated.astype('float64')
         contaminated = contaminated.copy()

@@ -10,6 +10,7 @@ from basic import *
 logging.basicConfig(level = 'INFO')
 logger = logging.getLogger(name = __name__)
 
+from sklearn.ensemble import IsolationForest
 from sklearn.metrics import precision_score, recall_score, f1_score
 
 from loader import Loader
@@ -115,6 +116,12 @@ violins_.savefig('figures/violins-test.png', dpi = 300)
 
 # - anomaly detection -
 
+#traditional
+forest = IsolationForest()
+forest.fit(normal)
+forest_pred = forest.predict(contaminated) < 0
+forest_pred_ = forest.predict(contaminated_) < 0
+
 detector = AnomalyDetector()
 detector.build(normal, anomalous, ae)
 
@@ -123,6 +130,9 @@ prediction_ = detector.predict(contaminated_)
 
 #train
 print('\n\n')
+print('     forest F1 (train): {f1}\n'.format(
+    f1 = f1_score(truth, forest_pred),
+    ))
 print('     precision (train): {precision}'.format(
     precision = precision_score(truth, prediction),
     ))
@@ -135,6 +145,9 @@ print('            F1 (train): {f1}'.format(
 
 #test
 print('\n\n')
+print('      forest F1 (test): {f1}\n'.format(
+    f1 = f1_score(truth_, forest_pred_),
+    ))
 print('      precision (test): {precision}'.format(
     precision = precision_score(truth_, prediction_),
     ))
