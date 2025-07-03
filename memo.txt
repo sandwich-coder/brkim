@@ -1,2 +1,2 @@
 1.   'if' statements follow the "false-first" rule.
-2.   Class attributes are used as they are. However, instance attributes are always fetched as locals and stored, if needed, at the end.
+2.   Class attributes are used as they are. However, instance attributes are always fetched to locals and stored, if needed, at the end.
