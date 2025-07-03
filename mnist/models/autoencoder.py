@@ -29,7 +29,7 @@ class Autoencoder(nn.Module):
             nn.init.xavier_uniform_(encoder[-1][0].weight)
             nn.init.xavier_uniform_(decoder[-1][0].weight)
 
-        #stored
+        #pushed
         self.encoder = encoder
         self.decoder = decoder
         self.in_features = encoder[0][0].weight.size(dim = 1)
@@ -58,7 +58,7 @@ class Autoencoder(nn.Module):
             if self.scaler is None:
                 raise NotImplementedError('The scaler has not been constructed.')
         X = X.copy()
-        scaler = self.scaler    #fetched
+        scaler = self.scaler    #pulled
 
         if not train:
             pass
@@ -69,7 +69,7 @@ class Autoencoder(nn.Module):
         processed = scaler.transform(X)
         processed = torch.tensor(processed, dtype = torch.float32)
 
-        #stored
+        #pushed
         self.scaler = scaler
 
         return processed
@@ -89,7 +89,7 @@ class Autoencoder(nn.Module):
         if self.scaler is None:
             raise NotImplementedError('The scaler has not been constructed.')
         processed = torch.clone(processed)
-        scaler = self.scaler    #fetched
+        scaler = self.scaler    #pulled
 
         _ = processed.numpy()
         unprocessed = _.astype('float64')

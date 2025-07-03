@@ -42,7 +42,7 @@ class Trainer:
         self.trained_array = None
         self.trained_ae = None
 
-        #stored
+        #pushed
         self.Optimizer = Optimizer
         self.loss_fn = LossFn()
 
@@ -64,8 +64,8 @@ class Trainer:
         if self.loss_fn is None:
             raise NotImplementedError('The loss function has not been constructed.')
         X = X.copy()
-        Optimizer = self.Optimizer    #fetched
-        loss_fn = self.loss_fn    #fetched
+        Optimizer = self.Optimizer    #pulled
+        loss_fn = self.loss_fn    #pulled
 
         #processed
         data = ae.process(X)
@@ -124,7 +124,7 @@ class Trainer:
         #back to cpu
         ae.cpu()
 
-        #stored
+        #pushed
         self.batchloss = batchloss.copy()
         self.trained_array = X.copy()
         self.trained_ae = ae
@@ -133,7 +133,7 @@ class Trainer:
     def plot_losses(self):
         if self.batchloss is None:
             raise NotImplementedError('No training has been done.')
-        batchloss = self.batchloss    #fetched
+        batchloss = self.batchloss    #pulled
         fig = pp.figure(layout = 'constrained', figsize = (10, 7.3))
         ax = fig.add_subplot()
         ax.set_box_aspect(0.7)

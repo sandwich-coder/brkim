@@ -93,7 +93,7 @@ class AnomalyDetector:
         else:
             threshold = np.quantile(normal_error, 0.99, axis = 0)
 
-        #stored
+        #pushed
         self.ae = ae
         self.metric = diff
         self.threshold = threshold
@@ -114,9 +114,9 @@ class AnomalyDetector:
         if self.threshold is None:
             raise NotImplementedError('The threshold has not been constructed.')
         contaminated = contaminated.copy()
-        ae = self.ae    #fetched
-        metric = self.metric    #fetched
-        threshold = self.threshold    #fetched
+        ae = self.ae    #pulled
+        metric = self.metric    #pulled
+        threshold = self.threshold    #pulled
 
         error = metric(
             contaminated,
