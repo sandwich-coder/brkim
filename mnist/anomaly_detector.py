@@ -6,9 +6,12 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 
 class AnomalyDetector:
     def __init__(self):
+
+        #initialized
         self.ae = None
         self.metric = None
         self.threshold = None
+
     def __repr__(self):
         return 'anomaly detector'
 
@@ -104,12 +107,21 @@ class AnomalyDetector:
         if contaminated.dtype != np.float64:
             logger.warning('The dtype doesn\'t match.')
             contaminated = contaminated.astype('float64')
+        if self.ae is None:
+            raise NotImplementedError('The autoencoder has not been constructed.')
+        if self.metric is None:
+            raise NotImplementedError('The metric has not been constructed.')
+        if self.threshold is None:
+            raise NotImplementedError('The threshold has not been constructed.')
         contaminated = contaminated.copy()
+        ae = self.ae    #fetched
+        metric = self.metric    #fetched
+        threshold = self.threshold    #fetched
 
-        error = self.metric(
+        error = metric(
             contaminated,
-            self.ae.flow(contaminated),
+            ae.flow(contaminated),
             )
 
-        prediction = error >= self.threshold
+        prediction = error >= threshold
         return prediction
