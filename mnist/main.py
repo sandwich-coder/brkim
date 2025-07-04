@@ -40,13 +40,16 @@ else:
         logger.info('Nvidia driver checked')
 
 
+dataset = 'mnist'
+anomaly = 'cloths'
+
 #tools
 sampler = Sampler()
 
 #load
 loader = Loader()
-X = loader.load('mnist')
-X_ = loader.load('mnist', train = False)
+X = loader.load(dataset)
+X_ = loader.load(dataset, train = False)
 
 
 # - prepared -
@@ -54,7 +57,7 @@ X_ = loader.load('mnist', train = False)
 #train
 normal = X.copy()
 anomalous = sampler.sample(
-    loader.load('cloths'),
+    loader.load(anomaly),
     len(normal) // 9,
     )
 contaminated = np.concatenate([
@@ -68,7 +71,7 @@ truth = truth.astype('bool')
 #test
 normal_ = X_.copy()
 anomalous_ = sampler.sample(
-    loader.load('cloths', train = False),
+    loader.load(anomaly, train = False),
     len(normal_) // 9,
     )
 contaminated_ = np.concatenate([

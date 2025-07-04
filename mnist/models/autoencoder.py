@@ -15,14 +15,14 @@ class Autoencoder(nn.Module):
         self.scaler = None
 
         encoder = nn.Sequential(
-            nn.Sequential(nn.Linear(784, 261), nn.Dropout(0.1), nn.GELU()),
-            nn.Sequential(nn.Linear(261, 87), nn.Dropout(0.1), nn.GELU()),
-            nn.Sequential(nn.Linear(87, 10), nn.Dropout(0.1), nn.Tanh()),
+            nn.Sequential(nn.Linear(784, 261), nn.GELU()),
+            nn.Sequential(nn.Linear(261, 87), nn.GELU()),
+            nn.Sequential(nn.Linear(87, 10), nn.Tanh()),
             )
         decoder = nn.Sequential(
-            nn.Sequential(nn.Linear(10, 87), nn.Dropout(0.1), nn.GELU()),
-            nn.Sequential(nn.Linear(87, 261), nn.Dropout(0.1), nn.GELU()),
-            nn.Sequential(nn.Linear(261, 784), nn.Dropout(0.1), nn.Tanh()),
+            nn.Sequential(nn.Linear(10, 87), nn.GELU()),
+            nn.Sequential(nn.Linear(87, 261), nn.GELU()),
+            nn.Sequential(nn.Linear(261, 784), nn.Tanh()),
             )
 
         with torch.no_grad():
