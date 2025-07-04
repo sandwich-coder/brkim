@@ -19,6 +19,7 @@ from trainer import Trainer
 from anomaly_detector import AnomalyDetector
 from plotter import Plotter
 from tools.sampler import Sampler
+from tools.dimension_estimator import DimensionEstimator
 
 #gpu driver check
 sh = 'nvidia-smi'
@@ -45,11 +46,18 @@ anomaly = 'cloths'
 
 #tools
 sampler = Sampler()
+estimator = DimensionEstimator()
 
 #load
 loader = Loader()
 X = loader.load(dataset)
 X_ = loader.load(dataset, train = False)
+
+"""
+logging.info('Intrinsic Dimension: {dimension}'.format(
+    dimension = estimator(X, exact = True, trim = True),
+    ))
+"""
 
 
 # - prepared -
