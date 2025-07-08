@@ -16,7 +16,7 @@ else:
 learning_rate = 0.0001
 epsilon = 1e-7
 batch_size = 32
-epochs = 100
+epochs = 30
 
 
 class Trainer:
@@ -138,6 +138,8 @@ class Trainer:
         ax = fig.add_subplot()
         ax.set_box_aspect(0.7)
         ax.set_title('Losses')
+        ax.set_xlabel('batch')
+        ax.set_ylabel('loss')
         pp.setp(ax.get_yticklabels(), rotation = 90, ha = 'right', va = 'center')
 
         plot = ax.plot(

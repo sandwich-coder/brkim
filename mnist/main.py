@@ -1,16 +1,41 @@
 import sys, os, subprocess
 
 #python check
-if sys.version_info[:2] != (3, 12):
+from sys import version_info as python_version
+if python_version[:2] != (3, 12):
     raise RuntimeError('This module is intended to be run on Python 3.12.')
+
+#console input
+from argparse import ArgumentParser as Parser
+parser = Parser()
+parser.add_argument('dataset', metavar = 'normal data')
+parser.add_argument('anomaly', metavar = 'anomalous data')
+parser.add_argument('--log', metavar = 'logging level', default = 'INFO')
+args = parser.parse_args()
+dataset = args.dataset
+anomaly = args.anomaly
+logging_level = args.log
+
+#CUDA version scan
+sh = 'nvidia-smi'
+sh_ = subprocess.run('which ' + sh, shell = True, capture_output = True, text = True).stdout
+if sh_ == '':
+    cuda_version = None
 else:
-    print('Python version checked')
+    sh_ = subprocess.run(
+        sh,
+        shell = True, capture_output = True, text = True,
+        ).stdout
+    cuda_version = sh_.split()
+    cuda_version = cuda_version[cuda_version.index('CUDA') + 2]
+
 
 from basic import *
-logging.basicConfig(level = 'INFO')
-logger = logging.getLogger(name = __name__)
+logger = logging.getLogger(name = 'main')
+logging.basicConfig(level = logging_level)
 
 from sklearn.ensemble import IsolationForest
+from sklearn.metrics import precision_score, recall_score, f1_score
 
 from loader import Loader
 from models.autoencoder import Autoencoder
@@ -21,27 +46,15 @@ from tools.sampler import Sampler
 from tools.dimension_estimator import DimensionEstimator
 
 #gpu driver check
-sh = 'nvidia-smi'
-sh_ = subprocess.run('which ' + sh, shell = True, capture_output = True, text = True)
-if sh_.stdout == '':
-    logger.info('The nvidia driver does not exist.'.format(command = sh))
+if torch.version.cuda is None:
+    logger.info('The installed pytorch is not built with CUDA. Install a CUDA-enabled.')
+elif cuda_version is None:
+    logger.info('The nvidia driver does not exist.')
+elif float(cuda_version) < float(torch.version.cuda):
+    logger.info('The supported CUDA is lower than installed. Upgrade the driver.')
 else:
-    sh_ = subprocess.run(
-        sh,
-        shell = True, capture_output = True, text = True,
-        )
-    cuda_version = sh_.stdout.split()
-    cuda_version = cuda_version[cuda_version.index('CUDA') + 2]
-    if torch.version.cuda is None:
-        logger.info('The installed pytorch is not built with CUDA. Install a CUDA-enabled.')
-    elif float(cuda_version) < float(torch.version.cuda):
-        logger.info('The supported CUDA is lower than installed. Upgrade the driver.')
-    else:
-        logger.info('Nvidia driver checked')
+    logger.info('- Nvidia driver checked -')
 
-
-dataset = 'mnist'
-anomaly = 'cloths'
 
 #tools
 sampler = Sampler()
@@ -53,7 +66,7 @@ X = loader.load(dataset)
 X_ = loader.load(dataset, train = False)
 
 """
-logging.info('Intrinsic Dimension: {dimension}'.format(
+logger.info('Intrinsic Dimension: {dimension}'.format(
     dimension = estimator(X, exact = True, trim = True),
     ))
 """
@@ -102,30 +115,26 @@ descent = trainer.plot_losses()
 # - plots -
 
 plotter = Plotter()
+figures = {}
 
-descent = trainer.plot_losses()
+figures['descent'] = trainer.plot_losses()
 
-errors = plotter.errors(normal, anomalous, ae)
-dashes = plotter.dashes(normal, ae)
-boxes = plotter.boxes(normal, ae)
-violins = plotter.violins(normal, ae)
+figures['errors-train'] = plotter.errors(normal, anomalous, ae)
+figures['dashes-train'] = plotter.dashes(normal, ae)
+figures['boxes-train'] = plotter.boxes(normal, ae)
+figures['violins-train'] = plotter.violins(normal, ae)
 
-errors_ = plotter.errors(normal_, anomalous_, ae)
-dashes_ = plotter.dashes(normal_, ae)
-boxes_ = plotter.boxes(normal_, ae)
-violins_ = plotter.violins(normal_, ae)
+figures['errors-test'] = plotter.errors(normal_, anomalous_, ae)
+figures['dashes-test'] = plotter.dashes(normal_, ae)
+figures['boxes-test'] = plotter.boxes(normal_, ae)
+figures['violins-test'] = plotter.violins(normal_, ae)
 
 #saved
 os.makedirs('figures', exist_ok = True)
-descent.savefig('figures/descent.png', dpi = 300)
-errors.savefig('figures/errors-train.png', dpi = 300)
-dashes.savefig('figures/dashes-train.png', dpi = 300)
-boxes.savefig('figures/boxes-train.png', dpi = 300)
-violins.savefig('figures/violins-train.png', dpi = 300)
-errors_.savefig('figures/errors-test.png', dpi = 300)
-dashes_.savefig('figures/dashes-test.png', dpi = 300)
-boxes_.savefig('figures/boxes-test.png', dpi = 300)
-violins_.savefig('figures/violins-test.png', dpi = 300)
+for l in figures:
+    figures[l].savefig('figures/{title}.png'.format(
+        title = l
+        ), dpi = 300)
 
 
 # - anomaly detection -
@@ -135,6 +144,14 @@ forest = IsolationForest()
 forest.fit(normal)
 forest_pred = forest.predict(contaminated) < 0
 forest_pred_ = forest.predict(contaminated_) < 0
+print('-- Isolation Forest --\n')
+print('F1 (train): {f1}'.format(
+    f1 = round(f1_score(truth, forest_pred), ndigits = 3),
+    ))
+print('F1  (test): {f1}'.format(
+    f1 = round(f1_score(truth_, forest_pred_), ndigits = 3),
+    ))
+print('\n')
 
 detector = AnomalyDetector(normal, anomalous, ae)
 

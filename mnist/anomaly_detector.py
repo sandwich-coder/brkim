@@ -134,13 +134,13 @@ class AnomalyDetector:
 
             print('')
             print('      Precision: {precision}'.format(
-                precision = precision_score(label, prediction),
+                precision = round(precision_score(label, prediction), ndigits = 3),
                 ))
             print('         Recall: {recall}'.format(
-                recall = recall_score(label, prediction),
+                recall = round(recall_score(label, prediction), ndigits = 3),
                 ))
             print('             F1: {f1}'.format(
-                f1 = f1_score(label, prediction),
+                f1 = round(f1_score(label, prediction), ndigits = 3),
                 ))
             print('\n')
 
