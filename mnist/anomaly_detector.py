@@ -5,17 +5,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 
 
 class AnomalyDetector:
-    def __init__(self):
-
-        #initialized
-        self.ae = None
-        self.metric = None
-        self.threshold = None
-
-    def __repr__(self):
-        return 'anomaly detector'
-
-    def build(self, normal, anomalous, ae, manual = False):
+    def __init__(self, normal, anomalous, ae, manual = False):
         if not isinstance(normal, np.ndarray):
             raise TypeError('The normal should be a \'numpy.ndarray\'.')
         if not isinstance(anomalous, np.ndarray):
@@ -36,6 +26,11 @@ class AnomalyDetector:
             anomalous = anomalous.astype('float64')
         normal = normal.copy()
         anomalous = anomalous.copy()
+
+        #initialized
+        self.ae = None
+        self.metric = None
+        self.threshold = None
 
         #Euclidean distance
         def diff(X, Y):
@@ -98,12 +93,22 @@ class AnomalyDetector:
         self.metric = diff
         self.threshold = threshold
 
+    def __repr__(self):
+        return 'anomaly detector'
 
-    def predict(self, contaminated):
+    def predict(self, contaminated, label = None):
         if not isinstance(contaminated, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
+        if not isinstance(label, np.ndarray | None):
+            raise TypeError('The label should be boolean.')
         if contaminated.ndim != 2:
-            raise ValueError('The input should be tabular.')
+            raise ValueError('The input must tabular.')
+        if label is not None:
+            if label.ndim != 1:
+                raise ValueError('The labels must be 1-dimensional.')
+        if label is not None:
+            if len(label) != len(contaminated):
+                raise ValueError('The labels must have the same length as the input.')
         if contaminated.dtype != np.float64:
             logger.warning('The dtype doesn\'t match.')
             contaminated = contaminated.astype('float64')
@@ -124,4 +129,20 @@ class AnomalyDetector:
             )
 
         prediction = error >= threshold
+
+        if label is not None:
+
+            print('')
+            print('      Precision: {precision}'.format(
+                precision = precision_score(label, prediction),
+                ))
+            print('         Recall: {recall}'.format(
+                recall = recall_score(label, prediction),
+                ))
+            print('             F1: {f1}'.format(
+                f1 = f1_score(label, prediction),
+                ))
+            print('\n')
+
+
         return prediction

@@ -11,7 +11,6 @@ logging.basicConfig(level = 'INFO')
 logger = logging.getLogger(name = __name__)
 
 from sklearn.ensemble import IsolationForest
-from sklearn.metrics import precision_score, recall_score, f1_score
 
 from loader import Loader
 from models.autoencoder import Autoencoder
@@ -97,11 +96,14 @@ ae = Autoencoder()
 #trained
 trainer = Trainer()
 trainer.train(X, ae)
+descent = trainer.plot_losses()
 
 
 # - plots -
 
 plotter = Plotter()
+
+descent = trainer.plot_losses()
 
 errors = plotter.errors(normal, anomalous, ae)
 dashes = plotter.dashes(normal, ae)
@@ -115,6 +117,7 @@ violins_ = plotter.violins(normal_, ae)
 
 #saved
 os.makedirs('figures', exist_ok = True)
+descent.savefig('figures/descent.png', dpi = 300)
 errors.savefig('figures/errors-train.png', dpi = 300)
 dashes.savefig('figures/dashes-train.png', dpi = 300)
 boxes.savefig('figures/boxes-train.png', dpi = 300)
@@ -133,38 +136,9 @@ forest.fit(normal)
 forest_pred = forest.predict(contaminated) < 0
 forest_pred_ = forest.predict(contaminated_) < 0
 
-detector = AnomalyDetector()
-detector.build(normal, anomalous, ae)
+detector = AnomalyDetector(normal, anomalous, ae)
 
-prediction = detector.predict(contaminated)
-prediction_ = detector.predict(contaminated_)
-
-#train
-print('\n\n')
-print('     forest F1 (train): {f1}\n'.format(
-    f1 = f1_score(truth, forest_pred),
-    ))
-print('     precision (train): {precision}'.format(
-    precision = precision_score(truth, prediction),
-    ))
-print('        recall (train): {recall}'.format(
-    recall = recall_score(truth, prediction),
-    ))
-print('            F1 (train): {f1}'.format(
-    f1 = f1_score(truth, prediction),
-    ))
-
-#test
-print('\n\n')
-print('      forest F1 (test): {f1}\n'.format(
-    f1 = f1_score(truth_, forest_pred_),
-    ))
-print('      precision (test): {precision}'.format(
-    precision = precision_score(truth_, prediction_),
-    ))
-print('         recall (test): {recall}'.format(
-    recall = recall_score(truth_, prediction_),
-    ))
-print('             F1 (test): {f1}'.format(
-    f1 = f1_score(truth_, prediction_),
-    ))
+print('   --- Train ---')
+prediction = detector.predict(contaminated, label = truth)
+print('   --- Test ---')
+prediction = detector.predict(contaminated_, label = truth_)

@@ -133,7 +133,7 @@ class Trainer:
     def plot_losses(self):
         if self.batchloss is None:
             raise NotImplementedError('No training has been done.')
-        batchloss = self.batchloss    #pulled
+        batchloss = self.batchloss.copy()    #pulled
         fig = pp.figure(layout = 'constrained', figsize = (10, 7.3))
         ax = fig.add_subplot()
         ax.set_box_aspect(0.7)
