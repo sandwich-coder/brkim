@@ -16,7 +16,7 @@ class DimensionEstimator:
     def __call__(
         self,
         X,
-        batch_count = 300,
+        batch_count = 1000,
         exact = False,
         trim = False,
         divisions = 10,
