@@ -1,20 +1,16 @@
 import sys, os, subprocess
+import argparse
 
 #python check
-from sys import version_info as python_version
-if python_version[:2] != (3, 12):
+if sys.version_info[:2] != (3, 12):
     raise RuntimeError('This module is intended to be run on Python 3.12.')
 
 #console input
-from argparse import ArgumentParser as Parser
-parser = Parser()
+parser = argparse.ArgumentParser()
 parser.add_argument('dataset', metavar = 'normal data')
 parser.add_argument('anomaly', metavar = 'anomalous data')
 parser.add_argument('--log', metavar = 'logging level', default = 'INFO')
 args = parser.parse_args()
-dataset = args.dataset
-anomaly = args.anomaly
-logging_level = args.log
 
 #CUDA version scan
 sh = 'nvidia-smi'
@@ -32,7 +28,7 @@ else:
 
 from basic import *
 logger = logging.getLogger(name = 'main')
-logging.basicConfig(level = logging_level)
+logging.basicConfig(level = args.log)
 
 from sklearn.ensemble import IsolationForest
 from sklearn.metrics import precision_score, recall_score, f1_score
@@ -46,15 +42,19 @@ from tools.sampler import Sampler
 from tools.dimension_estimator import DimensionEstimator
 
 #gpu driver check
-if torch.version.cuda is None:
-    logger.info('The installed pytorch is not built with CUDA. Install a CUDA-enabled.')
-elif cuda_version is None:
-    logger.info('The nvidia driver does not exist.')
+if None in [torch.version.cuda, cuda_version]:
+    if torch.version.cuda is None:
+        logger.info('The installed pytorch is not built with CUDA. Install a CUDA-enabled.')
+    if cuda_version is None:
+        logger.info('The nvidia driver does not exist.')
 elif float(cuda_version) < float(torch.version.cuda):
     logger.info('The supported CUDA is lower than installed. Upgrade the driver.')
 else:
     logger.info('- Nvidia driver checked -')
 
+
+dataset = args.dataset
+anomaly = args.anomaly
 
 #tools
 sampler = Sampler()
