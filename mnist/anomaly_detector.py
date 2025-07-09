@@ -99,8 +99,9 @@ class AnomalyDetector:
     def predict(self, contaminated, label = None):
         if not isinstance(contaminated, np.ndarray):
             raise TypeError('The input should be a \'numpy.ndarray\'.')
-        if not isinstance(label, np.ndarray | None):
-            raise TypeError('The label should be boolean.')
+        if label is not None:
+            if not isinstance(label, np.ndarray):
+                raise TypeError('The label should be boolean.')
         if contaminated.ndim != 2:
             raise ValueError('The input must tabular.')
         if label is not None:

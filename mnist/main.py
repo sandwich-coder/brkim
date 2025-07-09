@@ -144,6 +144,7 @@ forest = IsolationForest()
 forest.fit(normal)
 forest_pred = forest.predict(contaminated) < 0
 forest_pred_ = forest.predict(contaminated_) < 0
+print('\n\n')
 print('-- Isolation Forest --\n')
 print('F1 (train): {f1}'.format(
     f1 = round(f1_score(truth, forest_pred), ndigits = 3),
@@ -153,8 +154,8 @@ print('F1  (test): {f1}'.format(
     ))
 print('\n')
 
+#deep learning
 detector = AnomalyDetector(normal, anomalous, ae)
-
 print('   --- Train ---')
 prediction = detector.predict(contaminated, label = truth)
 print('   --- Test ---')
