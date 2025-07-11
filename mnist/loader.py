@@ -1,6 +1,5 @@
-from basic import *
+from environment import *
 logger = logging.getLogger(name = __name__)
-
 from torchvision.datasets import EMNIST, FashionMNIST
 from torchvision.transforms import ToTensor
 

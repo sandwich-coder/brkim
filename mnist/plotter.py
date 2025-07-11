@@ -1,10 +1,9 @@
-from basic import *
+from environment import *
 logger = logging.getLogger(name = __name__)
-
 import pandas as pd
 import seaborn as sb
 
-from tools.sampler import Sampler
+from utils import Sampler
 
 def _to_frame(array):
     feature = np.arange(1, array.shape[1]+1, dtype = 'int64')

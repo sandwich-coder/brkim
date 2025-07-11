@@ -26,20 +26,18 @@ else:
     cuda_version = cuda_version[cuda_version.index('CUDA') + 2]
 
 
-from basic import *
+from environment import *
 logger = logging.getLogger(name = 'main')
 logging.basicConfig(level = args.log)
-
 from sklearn.ensemble import IsolationForest
 from sklearn.metrics import precision_score, recall_score, f1_score
 
 from loader import Loader
-from models.autoencoder import Autoencoder
+from models import Autoencoder
 from trainer import Trainer
 from anomaly_detector import AnomalyDetector
 from plotter import Plotter
-from tools.sampler import Sampler
-from tools.dimension_estimator import DimensionEstimator
+from utils import Sampler, DimensionEstimator
 
 #gpu driver check
 if None in [torch.version.cuda, cuda_version]:

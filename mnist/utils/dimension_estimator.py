@@ -1,6 +1,5 @@
-from basic import *
+from environment import *
 logger = logging.getLogger(name = __name__)
-
 from scipy.spatial.distance import pdist, squareform, cdist
 from sklearn.ensemble import IsolationForest
 from sklearn.decomposition import PCA
