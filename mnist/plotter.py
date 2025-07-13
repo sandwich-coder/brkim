@@ -45,6 +45,8 @@ class Plotter:
             X = X.astype('float64')
         if X.ndim != 2:
             raise ValueError('The array must be tabular')
+        if X.shape[1] != 784:
+            raise ValueError('This function is intended to be executed only for 28x28 images.')
         if not isinstance(ae, nn.Module):
             raise TypeError('The autoencoder should be a \'torch.nn.Module\'.')
         if index is not None:
