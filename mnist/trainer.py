@@ -109,10 +109,11 @@ class Trainer:
             last_epoch = last_epoch.astype('float64')
 
             #epoch logging
-            print('Epoch {epoch:>3} | loss: {epochloss:<7}'.format(
-                epoch = lll + 1,
-                epochloss = last_epoch.mean(axis = 0, dtype = 'float64').round(decimals = 6),
-                ))
+            if logger.getEffectiveLevel() <= 20:
+                print('Epoch {epoch:>3} | loss: {epochloss:<7}'.format(
+                    epoch = lll + 1,
+                    epochloss = last_epoch.mean(axis = 0, dtype = 'float64').round(decimals = 6),
+                    ))
 
             batchloss.append(last_epoch)
 
