@@ -3,7 +3,7 @@ This is an end-to-end anomaly detection, designed with extensions to IoT dataset
 
 ### Usage
 ```
-python -m mnist (normal) (anomaly)
+python -m mnist (normal) (anomaly) --log (logging level)
 ```
 
 #### Note
