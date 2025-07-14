@@ -32,12 +32,12 @@ logging.basicConfig(level = args.log)
 from sklearn.ensemble import IsolationForest
 from sklearn.metrics import precision_score, recall_score, f1_score
 
-from loader import Loader
-from models import Autoencoder
-from trainer import Trainer
-from anomaly_detector import AnomalyDetector
-from plotter import Plotter
-from utils import Sampler, DimensionEstimator
+from .loader import Loader
+from .models import Autoencoder
+from .trainer import Trainer
+from .anomaly_detector import AnomalyDetector
+from .plotter import Plotter
+from .utils import Sampler, DimensionEstimator
 
 #gpu driver check
 if None in [torch.version.cuda, cuda_version]:
