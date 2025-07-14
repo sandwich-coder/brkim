@@ -16,10 +16,12 @@ class Autoencoder(nn.Module):
         encoder = nn.Sequential(
             nn.Sequential(nn.Linear(784, 261), nn.GELU()),
             nn.Sequential(nn.Linear(261, 87), nn.GELU()),
-            nn.Sequential(nn.Linear(87, 10), nn.Tanh()),
+            nn.Sequential(nn.Linear(87, 27), nn.GELU()),
+            nn.Sequential(nn.Linear(27, 5), nn.Tanh()),
             )
         decoder = nn.Sequential(
-            nn.Sequential(nn.Linear(10, 87), nn.GELU()),
+            nn.Sequential(nn.Linear(5, 27), nn.GELU()),
+            nn.Sequential(nn.Linear(27, 87), nn.GELU()),
             nn.Sequential(nn.Linear(87, 261), nn.GELU()),
             nn.Sequential(nn.Linear(261, 784), nn.Tanh()),
             )
