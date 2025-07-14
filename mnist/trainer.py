@@ -4,13 +4,13 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 
-if torch.cuda.is_available():
+if not torch.cuda.is_available():
+    device = torch.device('cpu')
+    logger.info('CPU is assigned to \'device\' as fallback.')
+else:
     logger.info('CUDA is available.')
     device = torch.device('cuda')
     logger.info('GPU is assigned to \'device\'.')
-else:
-    device = torch.device('cpu')
-    logger.info('CPU is assigned to \'device\' as fallback.')
 
 learning_rate = 0.0001
 epsilon = 1e-7
@@ -90,7 +90,11 @@ class Trainer:
         for lll in range(epochs):
             ae.train()
             last_epoch = []
-            for t in tqdm(loader, leave = False, ncols = 70):
+            if logger.getEffectiveLevel() > 20:
+                temp = loader
+            else:
+                temp = tqdm(loader, leave = False, ncols = 70)
+            for t in temp:
 
                 output = ae(t)
                 loss = loss_fn(output, t)
@@ -109,7 +113,9 @@ class Trainer:
             last_epoch = last_epoch.astype('float64')
 
             #epoch logging
-            if logger.getEffectiveLevel() <= 20:
+            if logger.getEffectiveLevel() > 20:
+                pass
+            else:
                 print('Epoch {epoch:>3} | loss: {epochloss:<7}'.format(
                     epoch = lll + 1,
                     epochloss = last_epoch.mean(axis = 0, dtype = 'float64').round(decimals = 6),
